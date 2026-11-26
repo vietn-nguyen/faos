@@ -1,0 +1,12 @@
+.who { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.avatar-lg { width: 64px; height: 64px; border-radius: 50%; background: var(--brand-grad); color: #fff; display: grid; place-items: center; font-size: 26px; font-weight: 700; text-transform: uppercase; flex: none; }
+.who-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.who-name { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
+h3 { margin-top: 6px; }
+
+.totals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.total { display: flex; flex-direction: column; gap: 4px; background: linear-gradient(135deg, #1a5fe0 0%, #4a8bec 100%); border: 0; color: #fff; box-shadow: 0 12px 30px rgba(26, 95, 224, .25); }
+.total .stat-label { color: rgba(255, 255, 255, .8); }
+.total-value { font-size: 40px; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.total .muted { color: rgba(255, 255, 255, .85); }
+@media (max-width: 700px) { .totals { grid-template-columns: minmax(0, 1fr); } }

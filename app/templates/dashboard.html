@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Dashboard · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link on" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<div class="wrap">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+<div class="page-head"><div><h1>Dashboard hệ thống</h1><p class="sub">Số liệu tính trên toàn bộ dữ liệu hiện có.</p></div></div>
+<div class="tiles">
+  {% for label, key in [('Người dùng','users'), ('Bài toán','problems'), ('Học máy nâng cao','tasks'), ('Câu hỏi','questions'), ('Kỳ thi','contests'), ('Lượt nộp','submissions'), ('Lượt nộp học máy nâng cao','predictions'), ('Lượt luyện trắc nghiệm','practice'), ('Yêu cầu tạo đề','drafts')] %}
+  <div class="card stat"><span class="stat-label">{{ label }}</span><span class="stat-value">{{ counts[key] }}</span></div>
+  {% endfor %}
+</div>
+<div class="grid-2">
+  <div class="card stack">
+    <h2>Phân bố kết quả chấm</h2>
+    {% set total = verdicts|sum(attribute='n') %}
+    {% for v in verdicts %}
+    <div class="bar-row">
+      <span class="bar-label">{{ v.v|verdict|sub_status }}</span>
+      <span class="bar-track"><span class="bar v-{{ v.v }}" style="width: {{ (100 * v.n / total)|round(1) }}%"></span></span>
+      <span class="bar-value">{{ v.n }}<span class="muted"> · {{ (100 * v.n / total)|round|int }}%</span></span>
+    </div>
+    {% else %}<p class="muted">Chưa có lượt nộp.</p>{% endfor %}
+  </div>
+  <div class="card stack">
+    <h2>Tạo đề tự động</h2>
+    <div class="rate">
+      <span class="stat-label">Tỉ lệ duyệt</span>
+      <span class="stat-value">{{ rate ~ '%' if rate is not none else '—' }}</span>
+      <span class="meter"><span style="width: {{ rate or 0 }}%"></span></span>
+      <span class="muted small">Tính trên các bản đã duyệt hoặc từ chối.</span>
+    </div>
+    <div class="muted small">{% for r in by_kind %}{{ r.kind|kind }}: {{ r.n }}{{ ' · ' if not loop.last }}{% endfor %}</div>
+    <dl class="tokens">
+      <div><dt>Token vào</dt><dd>{{ '{:,}'.format(tokens.inp).replace(',', '.') }}</dd></div>
+      <div><dt>Token ra</dt><dd>{{ '{:,}'.format(tokens.outp).replace(',', '.') }}</dd></div>
+    </dl>
+  </div>
+</div>
+<div class="grid-2">
+  <div class="card flush">
+    <div class="card-head"><h2>Bản nháp theo trạng thái</h2></div>
+    <table class="tbl"><tbody>
+      {% for r in by_status %}<tr><td>{{ r.status|draft_status }}</td><td class="num right">{{ r.n }}</td></tr>
+      {% else %}<tr><td class="empty">Chưa có.</td></tr>{% endfor %}
+    </tbody></table>
+  </div>
+  <div class="card flush">
+    <div class="card-head"><h2>Lý do từ chối</h2></div>
+    <table class="tbl"><tbody>
+      {% for r in by_reason %}<tr><td>{{ r.reason|reason }}</td><td class="num right">{{ r.n }}</td></tr>
+      {% else %}<tr><td class="empty">Chưa có.</td></tr>{% endfor %}
+    </tbody></table>
+  </div>
+</div>
+<div class="card flush">
+  <div class="card-head"><h2>Bản nháp theo chủ đề</h2></div>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Chủ đề</th><th class="right">Tổng</th><th class="right">Đã duyệt</th><th class="right">Từ chối</th><th class="right">Lỗi</th></tr></thead>
+    <tbody>
+    {% for r in by_topic %}<tr><td>{{ r.topic|topic }}</td><td class="num right">{{ r.total }}</td><td class="num right">{{ r.approved }}</td><td class="num right">{{ r.rejected }}</td><td class="num right">{{ r.failed }}</td></tr>
+    {% else %}<tr><td colspan="5" class="empty">Chưa có yêu cầu tạo đề.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</div>
+<div class="card flush">
+  <div class="card-head"><h2>Đánh giá sinh đề</h2><span class="muted small">Theo loại đề và phiên bản tiêu chuẩn (thời điểm lưu tiêu chuẩn)</span></div>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Loại đề</th><th>Phiên bản tiêu chuẩn</th><th class="right">Yêu cầu</th><th>Lỗi theo lý do</th><th class="right">Bỏ vì trùng</th><th class="right">Đã duyệt</th><th class="right">Từ chối</th><th class="right">Tỉ lệ duyệt</th><th class="right">Token / đề duyệt</th></tr></thead>
+    <tbody>
+    {% for b in bench %}<tr><td>{{ KINDS[b.kind] }}</td><td class="small mono">{{ b.version[:16].replace('T', ' ') if b.version else '—' }}</td>
+      <td class="num right">{{ b.total }}</td>
+      <td class="small">{% for name, n in b.failed.items() %}{{ name }}: {{ n }}{% if not loop.last %}, {% endif %}{% else %}—{% endfor %}</td>
+      <td class="num right">{{ b.dropped }}</td><td class="num right">{{ b.approved }}</td><td class="num right">{{ b.rejected }}</td>
+      <td class="num right">{{ '%g%%'|format(b.rate) if b.rate is not none else '—' }}</td>
+      <td class="num right">{{ '{:,}'.format(b.per_item) if b.per_item else '—' }}</td></tr>
+    {% else %}<tr><td colspan="9" class="empty">Chưa có yêu cầu tạo đề.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</div>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Trang chủ · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+</head>
+<body>
+<main class="home">
+  <img class="glow" src="{{ url_for('static', filename='img/faos-hero.png') }}" alt="faos">
+  <nav class="auth">
+    {% if g.user %}
+    <a class="fill" href="{{ url_for('practice') }}">Vào luyện tập</a>
+    <a href="{{ url_for('user.logout') }}">Đăng xuất</a>
+    {% else %}
+    <a class="fill" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    <a href="{{ url_for('user.register') }}">Đăng ký</a>
+    {% endif %}
+  </nav>
+  {% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+  <section class="caption">
+    <p class="line1">luyện tập cùng <span class="word">faos</span></p>
+    <p class="line2">trắc nghiệm · giải thuật · trí tuệ nhân tạo</p>
+  </section>
+</main>
+</body>
+</html>

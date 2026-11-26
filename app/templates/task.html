@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>{{ task.title }} · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/task.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link{% if not attempt or attempt.kind == 'practice' %} on{% endif %}" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link{% if attempt and attempt.kind == 'exam' %} on{% endif %}" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link{% if not attempt or attempt.kind == 'practice' %} on{% endif %}" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link{% if attempt and attempt.kind == 'exam' %} on{% endif %}" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<div class="wrap">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+{% if attempt %}<a class="back" href="{{ url_for('contest.take', contestId=attempt.contestId) }}">← Quay lại {{ 'đề luyện tập' if attempt.kind == 'practice' else 'kỳ thi' }}</a>
+{% else %}<a class="back" href="{{ url_for('task.list') }}">← Danh sách bài học máy nâng cao</a>{% endif %}
+<div class="page-head">
+  <div>
+    <h1>{{ task.title }}</h1>
+    <div class="meta">
+      <span class="chip">{{ task.topic|topic }}</span>
+      <span class="pill d-{{ task.difficulty }}">{{ task.difficulty|difficulty }}</span>
+      {% if attempt %}<span class="pill {{ 'vio' if phase == 'private' else 'info' }}">{{ 'Đề luyện tập' if attempt.kind == 'practice' else 'Trong kỳ thi' }} · giai đoạn {{ phase|phase }}</span>{% endif %}
+      {% if not task.is_publish %}<span class="pill">Chưa công khai</span>{% endif %}
+    </div>
+  </div>
+  {% if not attempt %}<a class="btn ghost" href="{{ url_for('task.board', problemId=task.problemId) }}">Bảng xếp hạng</a>{% endif %}
+</div>
+<div class="layout">
+<div class="stack">
+  <div class="card stack">
+    <h3>Mô tả bài toán</h3>
+    <div class="text">{{ task.statement }}</div>
+    {% if task.dataDesc %}<h3>Mô tả dữ liệu</h3><div class="text">{{ task.dataDesc }}</div>{% endif %}
+    {% if task.submitFormat %}<h3>Cấu trúc file nộp</h3><div class="text">{{ task.submitFormat }}</div>{% endif %}
+  </div>
+  <div class="card flush">
+    <div class="card-head"><h2>Thang đo đánh giá</h2><span class="muted small">Điểm thô từ 0 đến 100</span></div>
+    <div class="table-wrap"><table class="tbl">
+      <thead><tr><th>Phần điểm</th><th>Độ đo</th><th>Tệp kết quả</th><th class="right">Trọng số</th><th class="right">Min_Score</th><th class="right">Max_Score</th></tr></thead>
+      <tbody>
+      {% for m in metrics %}
+      <tr><td class="title">{{ m.name }}</td><td>{{ m.metric|metric }}</td><td class="mono small">{{ m.fileName }}</td>
+        <td class="num right">{{ '%g'|format(m.weight) }}</td><td class="num right">{{ m.minScore|pts }}</td>
+        <td class="num right">{{ m.maxScore|pts if m.maxScore is not none else 'cao nhất' }}</td></tr>
+      {% else %}<tr><td colspan="6" class="empty">Bài chưa có phần điểm.</td></tr>{% endfor %}
+      </tbody>
+    </table></div>
+    <div class="card-body formula">
+      <code>Norm_score = 100 × (Score − Min_Score) / (Max_Score − Min_Score)</code>, bằng 0 khi Score ≤ Min_Score.
+      Điểm bài = tổng (trọng số × Norm_score) của các phần điểm.
+    </div>
+  </div>
+  {% if task.baseline %}
+  <div class="card flush">
+    <div class="card-head"><h2>Mã nguồn mẫu</h2><span class="chip mono">baseline</span></div>
+    <pre class="source">{{ task.baseline }}</pre>
+  </div>
+  {% endif %}
+</div>
+<div class="stack">
+  <div class="card flush">
+    <div class="card-head"><h2>Tải dữ liệu</h2></div>
+    <div class="files">
+      {% for f in files %}
+      <a class="file" href="{{ url_for('task.download', problemId=task.problemId, dataId=f.dataId, attempt=attempt.attemptId if attempt else none) }}">
+        <span class="file-name mono">{{ f.fileName }}</span>
+        <span class="muted small">{{ f.role|data_role }} · {{ f.size|size }}</span>
+      </a>
+      {% else %}<div class="empty">Chưa có tệp dữ liệu.</div>{% endfor %}
+      {% if attempt and phase == 'public' %}<div class="note muted small">Private test mở khi lượt thi bước vào giai đoạn private.</div>{% endif %}
+    </div>
+  </div>
+  <div class="card stack">
+    <h2>Nộp file kết quả</h2>
+    {% if phases %}
+    <form method="post" enctype="multipart/form-data" class="stack" action="{{ url_for('task.submitFile', problemId=task.problemId) }}">
+      {% if attempt %}<input type="hidden" name="attemptId" value="{{ attempt.attemptId }}">{% endif %}
+      <div class="field"><label for="phase">Giai đoạn</label>
+        <select id="phase" name="phase">{% for p in phases %}<option value="{{ p }}">{{ p|phase }} (còn {{ left[p] }} lượt)</option>{% endfor %}</select></div>
+      <div class="field"><label for="file">File kết quả (.csv, .json, .jsonl, .zip · tối đa 20 MB)</label>
+        <input id="file" name="file" type="file" accept=".csv,.json,.jsonl,.zip" required></div>
+      <button>Nộp file</button>
+      <p class="muted small">{{ 'Giới hạn tính trong lượt thi này.' if attempt and attempt.kind == 'exam' else 'Giới hạn tính theo ngày.' }}
+        Public {{ task.pubLimit }} lượt, private {{ task.priLimit }} lượt.</p>
+    </form>
+    {% else %}<p class="muted">Hiện không nhận bài nộp cho bài này.</p>{% endif %}
+  </div>
+  <div class="card flush">
+    <div class="card-head"><h2>Bài nộp của tôi</h2></div>
+    <div class="table-wrap"><table class="tbl">
+      <thead><tr><th>#</th><th>Giai đoạn</th><th>Trạng thái</th><th class="right">Điểm thô</th></tr></thead>
+      <tbody>
+      {% for h in history %}
+      <tr><td class="num"><a href="{{ url_for('task.prediction', predId=h.predId) }}">#{{ h.predId }}</a></td>
+        <td><span class="chip">{{ h.phase|phase }}</span></td>
+        <td><span class="pill p-{{ h.status }}">{{ h.status|pred_status }}</span></td>
+        <td class="num right">{{ h.score|pts }}</td></tr>
+      {% else %}<tr><td colspan="4" class="empty">Chưa có bài nộp.</td></tr>{% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+</div>
+</div>
+</div>
+</main>
+</body>
+</html>

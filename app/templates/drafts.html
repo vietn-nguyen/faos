@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Tạo đề tự động · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/drafts.css') }}">
+{% if busy %}<meta http-equiv="refresh" content="5">{% endif %}
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link on" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<div class="wrap">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+<div class="page-head"><div><h1>Tạo đề tự động</h1>
+  <p class="sub">LLM viết bản nháp bài toán, câu hỏi trắc nghiệm hoặc học máy nâng cao; hệ thống kiểm tra tự động rồi bản nháp chờ duyệt.</p></div>
+  <a class="btn ghost" href="{{ url_for('draft.standards') }}">Tiêu chuẩn tạo đề</a></div>
+<form class="card request" method="post" action="{{ url_for('draft.request') }}">
+  <div class="field"><label for="kind">Loại đề</label><select id="kind" name="kind" required>{% for k, v in KINDS.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="topic">Chủ đề</label><select id="topic" name="topic" required>{% for k, v in TOPICS.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="difficulty">Độ khó</label><select id="difficulty" name="difficulty" required>{% for k, v in DIFFICULTIES.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select></div>
+  <div class="field count"><label for="count">Số lượng</label><input id="count" name="count" type="number" min="1" max="5" value="1"></div>
+  <button>Yêu cầu tạo đề</button>
+</form>
+<div class="card flush">
+  <div class="card-head">
+    <h2>Danh sách yêu cầu tạo đề</h2>
+    {% if busy %}<span class="pill info"><span class="pulse" aria-hidden="true"></span>Đang xử lý, tự cập nhật sau 5 giây</span>{% endif %}
+  </div>
+  <div class="tabs">
+    {% for s in ['', 'pending_review', 'failed', 'approved', 'rejected'] %}
+    <a href="{{ url_for('draft.list', status=s) }}"{% if s == status %} class="active"{% endif %}>{{ s|draft_status if s else 'Tất cả' }}</a>
+    {% endfor %}
+  </div>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>#</th><th>Tiêu đề</th><th>Loại đề</th><th>Chủ đề</th><th>Độ khó</th><th>Trạng thái</th><th>Tạo lúc</th></tr></thead>
+    <tbody>
+    {% for d in drafts %}
+    <tr class="top">
+      <td class="num">{{ d.draftId }}</td>
+      <td><a class="title" href="{{ url_for('draft.detail', draftId=d.draftId) }}">{{ d.payload.title if d.payload else '(chưa có)' }}</a>
+        {% if d.errMess %}<div class="muted small err">{{ d.errMess[:120] }}</div>{% endif %}</td>
+      <td><span class="chip">{{ d.kind|kind }}</span></td>
+      <td><span class="chip">{{ d.topic|topic }}</span></td>
+      <td><span class="pill d-{{ d.difficulty }}">{{ d.difficulty|difficulty }}</span></td>
+      <td><span class="pill s-{{ d.status }}">{{ d.status|draft_status }}</span></td>
+      <td class="num">{{ d.created|dt }}</td>
+    </tr>
+    {% else %}<tr><td colspan="7" class="empty">Chưa có yêu cầu.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</div>
+</div>
+</main>
+</body>
+</html>

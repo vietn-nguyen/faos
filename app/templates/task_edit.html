@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>{{ 'Sửa bài' if task else 'Thêm bài' }} · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/task_edit.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link on" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}" class="cur">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<div class="wrap">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+<a class="back" href="{{ url_for('task.bank') }}">← Danh sách bài học máy nâng cao</a>
+<div class="page-head"><div><h1>{{ 'Sửa bài #' ~ task.problemId if task else 'Thêm bài học máy nâng cao' }}</h1>
+  {% if not task %}<p class="sub">Lưu bài trước, sau đó thiết lập phần điểm và tải dữ liệu, nhãn ẩn.</p>{% endif %}</div></div>
+<form method="post" class="card form-grid">
+  <div class="field full"><label for="title">Tiêu đề</label><input id="title" name="title" value="{{ task.title if task }}" required></div>
+  <div class="field full"><label for="statement">Mô tả bài toán</label><textarea id="statement" name="statement" rows="7" required>{{ task.statement if task }}</textarea></div>
+  <div class="field"><label for="dataDesc">Mô tả dữ liệu</label><textarea id="dataDesc" name="dataDesc" rows="5">{{ task.dataDesc if task }}</textarea></div>
+  <div class="field"><label for="submitFormat">Cấu trúc file nộp</label><textarea id="submitFormat" name="submitFormat" rows="5">{{ task.submitFormat if task }}</textarea></div>
+  <div class="field full"><label for="baseline">Mã nguồn mẫu (baseline)</label><textarea id="baseline" name="baseline" rows="6" class="code">{{ task.baseline if task }}</textarea></div>
+  <div class="field"><label for="topic">Chủ đề</label><select id="topic" name="topic">{% for k in AI_TOPICS %}<option value="{{ k }}" {{ 'selected' if task and task.topic == k }}>{{ k|topic }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="difficulty">Độ khó</label><select id="difficulty" name="difficulty">{% for k, v in DIFFICULTIES.items() %}<option value="{{ k }}" {{ 'selected' if task and task.difficulty == k }}>{{ v }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="pubLimit">Giới hạn nộp public</label><input id="pubLimit" name="pubLimit" type="number" min="0" value="{{ task.pubLimit if task else 20 }}"></div>
+  <div class="field"><label for="priLimit">Giới hạn nộp private</label><input id="priLimit" name="priLimit" type="number" min="0" value="{{ task.priLimit if task else 5 }}"></div>
+  <div class="full form-foot">
+    <label class="check"><input name="is_publish" type="checkbox" {{ 'checked' if not task or task.is_publish }}> Công khai cho sinh viên luyện tập</label>
+    <button>Lưu</button>
+  </div>
+</form>
+{% if task %}
+<div class="card flush">
+  <div class="card-head"><h2>Phần điểm</h2><span class="muted small">Mỗi phần là một độ đo trên một tệp kết quả</span></div>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Tên</th><th>Độ đo</th><th>Tệp kết quả</th><th>Cấu hình</th><th class="right">Trọng số</th><th class="right">Min</th><th class="right">Max</th><th></th></tr></thead>
+    <tbody>
+    {% for m in metrics %}
+    <tr><td class="title">{{ m.name }}</td><td>{{ m.metric|metric }}</td><td class="mono small">{{ m.fileName }}</td>
+      <td class="mono small">{{ m.config|tojson if m.config else '' }}</td>
+      <td class="num right">{{ '%g'|format(m.weight) }}</td><td class="num right">{{ m.minScore|pts }}</td><td class="num right">{{ m.maxScore|pts }}</td>
+      <td class="right"><form method="post" action="{{ url_for('task.deleteMetric', problemId=task.problemId, id=m.metricId) }}"><button class="danger sm">Xoá</button></form></td></tr>
+    {% else %}<tr><td colspan="8" class="empty">Chưa có phần điểm. Bài cần ít nhất một phần điểm để chấm.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+  <form method="post" action="{{ url_for('task.addMetric', problemId=task.problemId) }}" class="add">
+    <div class="field"><label for="m-name">Tên phần điểm</label><input id="m-name" name="name" placeholder="Điểm phân loại" required></div>
+    <div class="field"><label for="m-metric">Độ đo</label><select id="m-metric" name="metric">{% for k, v in METRICS.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="m-file">Tệp kết quả</label><input id="m-file" name="fileName" placeholder="submission.csv" required></div>
+    <div class="field"><label for="m-weight">Trọng số</label><input id="m-weight" name="weight" type="number" step="0.05" min="0" value="1"></div>
+    <div class="field"><label for="m-min">Min_Score (baseline)</label><input id="m-min" name="minScore" type="number" step="0.01" value="0"></div>
+    <div class="field"><label for="m-max">Max_Score (trống = cao nhất hiện tại)</label><input id="m-max" name="maxScore" type="number" step="0.01"></div>
+    <div class="field wide"><label for="m-config">Cấu hình JSON (tên cột mã dòng, cột nhãn...)</label><input id="m-config" name="config" class="code" placeholder='{"id": "file_name", "label": "category_id"}'></div>
+    <div class="add-foot"><button class="ghost">Thêm phần điểm</button></div>
+  </form>
+</div>
+<div class="card flush">
+  <div class="card-head"><h2>Dữ liệu và nhãn ẩn</h2><span class="muted small">Nhãn public, private chỉ dùng để chấm, sinh viên không tải được</span></div>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Loại</th><th>Tệp</th><th>Kích thước</th><th>Tải lên lúc</th><th></th></tr></thead>
+    <tbody>
+    {% for f in files %}
+    <tr><td><span class="pill {{ 'vio' if f.role in ('public_key', 'private_key') else 'info' }}">{{ f.role|data_role }}</span></td>
+      <td><a class="mono small" href="{{ url_for('task.download', problemId=task.problemId, dataId=f.dataId) }}">{{ f.fileName }}</a></td>
+      <td class="num">{{ f.size|size }}</td><td class="num">{{ f.created|dt }}</td>
+      <td class="right"><form method="post" action="{{ url_for('task.deleteDataset', problemId=task.problemId, id=f.dataId) }}"><button class="danger sm">Xoá</button></form></td></tr>
+    {% else %}<tr><td colspan="5" class="empty">Chưa có tệp. Cần ít nhất nhãn public để chấm.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+  <form method="post" enctype="multipart/form-data" action="{{ url_for('task.addDataset', problemId=task.problemId) }}" class="add">
+    <div class="field"><label for="d-role">Loại tệp</label><select id="d-role" name="role">{% for k, v in DATA_ROLES.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select></div>
+    <div class="field wide"><label for="d-file">Tệp</label><input id="d-file" name="file" type="file" required></div>
+    <div class="add-foot"><button class="ghost">Tải lên</button></div>
+  </form>
+</div>
+<div class="card danger-zone">
+  <div><h2>Chấm lại</h2><p class="muted small">Sửa phần điểm hoặc nhãn ẩn không làm đổi điểm cũ. Bấm "Chấm lại" để chấm lại {{ n_preds }} bài nộp và tính lại điểm kỳ thi.</p></div>
+  <form method="post" action="{{ url_for('task.rescore', problemId=task.problemId) }}"
+        onsubmit="return confirm('Chấm lại mọi bài nộp của bài này?')"><button class="ghost"{% if not n_preds %} disabled{% endif %}>Chấm lại</button></form>
+</div>
+<div class="card danger-zone">
+  <div><h2>Xoá bài</h2><p class="muted small">Bài đã có bài nộp hoặc nằm trong kỳ thi thì không xoá được, hãy bỏ công khai.</p></div>
+  <form method="post" action="{{ url_for('task.delete', problemId=task.problemId) }}"
+        onsubmit="return confirm('Xoá bài này?')"><button class="danger">Xoá bài</button></form>
+</div>
+{% endif %}
+</div>
+</main>
+</body>
+</html>

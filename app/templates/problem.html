@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>{{ problem.title }} · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/problem.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link{% if not attempt or attempt.kind == 'practice' %} on{% endif %}" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link{% if attempt and attempt.kind == 'exam' %} on{% endif %}" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link{% if not attempt or attempt.kind == 'practice' %} on{% endif %}" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link{% if attempt and attempt.kind == 'exam' %} on{% endif %}" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<div class="wrap">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+{% if attempt %}<a class="back" href="{{ url_for('contest.take', contestId=attempt.contestId) }}">← Quay lại {{ 'đề luyện tập' if attempt.kind == 'practice' else 'bài thi' }}</a>
+{% else %}<a class="back" href="{{ url_for('problem.list') }}">← Danh sách bài</a>{% endif %}
+<div class="page-head">
+  <div>
+    <h1>{{ problem.title }}</h1>
+    <div class="meta">
+      <span class="chip">{{ problem.topic|topic }}</span>
+      <span class="pill d-{{ problem.difficulty }}">{{ problem.difficulty|difficulty }}</span>
+      <span class="limit">Thời gian <b>{{ '%g'|format(problem.timeLimit) }} giây</b></span>
+      <span class="limit">Bộ nhớ <b>{{ problem.memoryLimit }} MB</b></span>
+    </div>
+  </div>
+</div>
+<div class="split">
+  <section class="card statement">
+    <h3>Đề bài</h3><p class="text">{{ problem.statement }}</p>
+    {% if problem.input %}<h3>Input</h3><p class="text">{{ problem.input }}</p>{% endif %}
+    {% if problem.output %}<h3>Output</h3><p class="text">{{ problem.output }}</p>{% endif %}
+    {% if problem.constraints %}<h3>Giới hạn</h3><p class="text">{{ problem.constraints }}</p>{% endif %}
+    {% for s in samples %}
+    <h3>Ví dụ {{ loop.index }}</h3>
+    <div class="sample">
+      <div><div class="pre-label">Input</div><pre>{{ s.input.rstrip() }}</pre></div>
+      <div><div class="pre-label">Output</div><pre>{{ s.output.rstrip() }}</pre></div>
+    </div>
+    {% endfor %}
+  </section>
+  <div class="stack">
+    <form class="card flush editor" method="post" action="{{ url_for('submission.submit', problemId=problem.problemId) }}">
+      <div class="card-head"><h2>Mã nguồn</h2><span class="chip mono">Python 3.8</span></div>
+      {% if attempt %}<input type="hidden" name="attemptId" value="{{ attempt.attemptId }}">{% endif %}
+      <textarea id="code" name="sourceCode" class="code" rows="16" spellcheck="false">{{ last_code or "import sys\n\ndef main():\n    data = sys.stdin.read().split()\n    \n\nmain()\n" }}</textarea>
+      <div class="editor-foot">
+        <span class="muted small" id="run-status">"Chạy" thử trên ví dụ mẫu, "Nộp bài" chấm trên mọi test.</span>
+        <div class="actions"><button type="button" class="ghost" id="run-btn">Chạy</button><button>Nộp bài</button></div>
+      </div>
+    </form>
+    <div id="run-out" class="stack"></div>
+    <div class="card flush">
+      <div class="card-head"><h2>Lần nộp gần đây</h2></div>
+      <div class="table-wrap"><table class="tbl">
+        <tbody>
+        {% for s in history %}
+        <tr><td class="num"><a href="{{ url_for('submission.detail', submissionId=s.submissionId) }}">#{{ s.submissionId }}</a></td>
+          <td><span class="verdict v-{{ s.verdict or 'wait' }}">{{ s.verdict|verdict if s.verdict else s.status|sub_status }}</span></td>
+          <td class="num">{{ s.passed }}/{{ s.total }}</td><td class="num right">{{ s.created|dt }}</td></tr>
+        {% else %}<tr><td class="empty">Chưa nộp lần nào.</td></tr>{% endfor %}
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+</div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const setStatus = (text) => { $("run-status").textContent = text; };
+const cm = window.CodeMirror ? CodeMirror.fromTextArea($("code"), { mode: "python", lineNumbers: true, indentUnit: 4,
+  extraKeys: { Tab: (c) => c.replaceSelection("    ") } }) : null;
+const getCode = () => cm ? cm.getValue() : $("code").value;
+$("code").form.addEventListener("submit", () => { if (cm) cm.save(); });
+
+function showResult(t, i) {
+  const card = document.createElement("div");
+  card.className = "card run-card";
+  const head = document.createElement("div");
+  head.className = "run-head";
+  const name = document.createElement("strong");
+  name.textContent = "Ví dụ " + (i + 1);
+  const verdict = document.createElement("span");
+  verdict.className = "verdict v-" + t.verdict;
+  verdict.textContent = t.verdict;
+  head.append(name, verdict);
+  card.appendChild(head);
+  for (const [label, text] of [["Input", t.input], ["Mong đợi", t.output], ["Output", t.stdout], ["Lỗi", t.stderr]]) {
+    if (!text) continue;
+    const l = document.createElement("div"); l.className = "pre-label"; l.textContent = label;
+    const pre = document.createElement("pre"); pre.textContent = text.trimEnd();
+    card.append(l, pre);
+  }
+  $("run-out").appendChild(card);
+}
+
+async function runSamples() {
+  $("run-btn").disabled = true;
+  $("run-out").innerHTML = "";
+  setStatus("Đang chạy trên ví dụ mẫu...");
+  const body = new FormData();
+  body.append("sourceCode", getCode());
+  {% if attempt %}body.append("attemptId", "{{ attempt.attemptId }}");{% endif %}
+  try {
+    const r = await fetch("{{ url_for('submission.run', problemId=problem.problemId) }}", { method: "POST", body });
+    const data = await r.json();
+    if (data.error) { setStatus(data.error); return; }
+    data.results.forEach(showResult);
+    const ok = data.results.filter((t) => t.verdict === "AC").length;
+    setStatus("Đúng " + ok + "/" + data.results.length + " ví dụ mẫu.");
+  } catch (e) {
+    setStatus("Không kết nối được máy chủ.");
+  } finally {
+    $("run-btn").disabled = false;
+  }
+}
+$("run-btn").addEventListener("click", runSamples);
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+.request { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+.request .field { flex: 1 1 180px; }
+.request .count { flex: 0 0 110px; }
+.tabs { display: flex; gap: 4px; padding: 10px 16px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tabs a { padding: 6px 12px; border-radius: 7px; font-size: 13.5px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.tabs a:hover { background: var(--grey-soft); text-decoration: none; }
+.tabs a.active { background: var(--accent-soft); color: var(--accent-d); font-weight: 600; }
+.err { max-width: 52ch; margin-top: 2px; }
+.s-pending_review { background: var(--warn-soft); color: var(--warn); }
+.s-approved { background: var(--ok-soft); color: var(--ok); }
+.s-rejected, .s-failed { background: var(--bad-soft); color: var(--bad); }
+.s-generating, .s-validating { background: var(--accent-soft); color: var(--accent-d); }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .3; } }

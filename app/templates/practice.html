@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Luyện tập · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/practice.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link on" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link on" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+<div class="head">
+  <div>
+    <h1>Luyện tập</h1>
+    <p class="lead">Lựa chọn đề luyện tập tuỳ ý để ôn luyện kiến thức và chuẩn bị cho các kỳ thi.</p>
+  </div>
+  {% if g.user.role in ('supervisor', 'admin') %}<a class="btn new" href="{{ url_for('contest.create_practice', section=section if section != 'all' else 'mix') }}">+ Tạo đề luyện tập</a>{% endif %}
+</div>
+<form class="filters" method="get">
+  {% if section == 'mix' %}<input type="hidden" name="section" value="mix">{% endif %}
+  <label class="f"><span>Chủ đề</span>
+    <select name="topic"><option value="">Mọi chủ đề</option>
+      {% for k, v in TOPICS.items() %}<option value="{{ k }}" {{ 'selected' if k == topic }}>{{ v }}</option>{% endfor %}
+    </select></label>
+  <label class="f"><span>Mức độ</span>
+    <select name="difficulty"><option value="">Mọi mức độ</option>
+      {% for k, v in DIFFICULTIES.items() %}<option value="{{ k }}" {{ 'selected' if k == difficulty }}>{{ v }}</option>{% endfor %}
+    </select></label>
+  <button class="go">Lọc</button>
+</form>
+<nav class="tabs" aria-label="Loại luyện tập">
+  <a href="{{ url_for('practice') }}"{% if section == 'all' %} class="on"{% endif %}>Tất cả</a>
+  <a href="{{ url_for('problem.list') }}"{% if section == 'code' %} class="on"{% endif %}>Lập trình</a>
+  <a href="{{ url_for('quiz.practice') }}"{% if section == 'question' %} class="on"{% endif %}>Trắc nghiệm</a>
+  <a href="{{ url_for('task.list') }}"{% if section == 'predict' %} class="on"{% endif %}>Học máy nâng cao</a>
+  <a href="{{ url_for('practice', section='mix') }}"{% if section == 'mix' %} class="on"{% endif %}>Tổng hợp</a>
+</nav>
+<div class="list">
+{% for t in tests %}
+<article class="item">
+  <div class="item-main">
+    <div class="item-title"><h2>{{ t.title }}</h2>{% if t.finished %}<span class="pill ok">Đã nộp</span>{% elif t.attemptId %}<span class="pill info">Đang làm</span>{% endif %}</div>
+    {% if t.descp %}<p class="desc">{{ t.descp }}</p>{% endif %}
+    <dl class="facts">
+      {% if t.n_q %}<div><dt>Câu hỏi</dt><dd>{{ t.n_q }}</dd></div>{% endif %}
+      {% if t.n_p %}<div><dt>Bài toán</dt><dd>{{ t.n_p }}</dd></div>{% endif %}
+      {% if t.n_t %}<div><dt>Học máy nâng cao</dt><dd>{{ t.n_t }}</dd></div>{% endif %}
+    </dl>
+    <div class="chips">{% for tp in (t.topics or '').split(',') if tp %}<span class="chip">{{ tp|topic }}</span>{% endfor %}</div>
+  </div>
+  <div class="item-side">
+    {% if t.finished %}
+      <div class="score"><span>Điểm lần gần nhất</span><strong>{{ '%g'|format(t.totalScore) }}</strong></div>
+      <a class="btn ghost" href="{{ url_for('contest.result', contestId=t.contestId) }}">Xem kết quả</a>
+    {% else %}
+      <form method="post" action="{{ url_for('contest.join', contestId=t.contestId) }}"><button>{{ 'Tiếp tục' if t.attemptId else 'Làm bài' }}</button></form>
+    {% endif %}
+  </div>
+</article>
+{% else %}<div class="none">Chưa có đề luyện tập nào{% if topic or difficulty %} khớp với bộ lọc{% endif %}.</div>{% endfor %}
+</div>
+{% if stats is not none %}
+<section class="panel">
+  <div class="card-head"><h2>Thống kê theo chủ đề</h2><span class="muted small">Tính trên mọi lần nộp đề luyện tập của bạn</span></div>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Chủ đề</th><th class="right">Số câu đã gặp</th><th class="right">Lượt trả lời</th><th class="right">Đúng</th><th>Tỉ lệ đúng</th></tr></thead>
+    <tbody>
+    {% for s in stats %}
+    {% set rate = (100 * s.correct / s.answered)|round|int if s.answered else 0 %}
+    <tr><td><span class="chip">{{ s.topic|topic }}</span></td><td class="num right">{{ s.total }}</td>
+      <td class="num right">{{ s.answered }}</td><td class="num right">{{ s.correct }}</td>
+      <td><div class="ratio"><span class="meter"><span style="width: {{ rate }}%"></span></span><span class="num">{{ rate }}%</span></div></td></tr>
+    {% else %}<tr><td colspan="5" class="empty">Bạn chưa nộp đề luyện tập trắc nghiệm nào.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% endif %}
+</main>
+</body>
+</html>

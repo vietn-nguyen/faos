@@ -1,0 +1,16 @@
+.picks { display: flex; flex-direction: column; max-height: 482px; overflow-y: auto; overscroll-behavior: contain; }
+.pick { display: flex; align-items: center; gap: 10px 12px; flex-wrap: wrap; padding: 11px 20px; border-bottom: 1px solid var(--line-2); }
+.pick:last-child { border-bottom: 0; }
+.pick:hover { background: #fafbfd; }
+.pick:has(input:checked) { background: var(--accent-soft); }
+.pick-main { display: flex; align-items: flex-start; gap: 11px; flex: 1 1 320px; min-width: 0; cursor: pointer; font-weight: 500; }
+.pick-main input { margin-top: 3px; }
+.points { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; }
+.points input { width: 74px; padding: 6px 8px; font-family: var(--mono); font-size: 13px; }
+.empty { padding: 26px 16px; }
+.rand { display: flex; align-items: center; gap: 8px 10px; flex-wrap: wrap; padding: 12px 20px; border-bottom: 1px solid var(--line); background: #fafbfd; }
+.rand input { width: 84px; }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
+.tabs a { padding: 9px 14px; margin-bottom: -1px; border-bottom: 2px solid transparent; color: var(--muted); font-weight: 500; font-size: 14px; }
+.tabs a:hover { color: var(--text); text-decoration: none; }
+.tabs a.on { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Bảng xếp hạng · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ranking.css') }}">
+</head>
+<body>
+<img class="bg-glow" src="{{ url_for('static', filename='img/faos-hero.png') }}" alt="">
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link on" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}" class="cur">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<h1>Bảng vàng hệ thống</h1>
+<div class="boards">
+  <section class="board">
+    <h2>Luyện tập</h2>
+    {% set b = boards['practice'] %}
+    {% set top = b.top %}
+    <div class="podium">
+      {% for i in [1, 0, 2] %}
+      {% set r = top[i] if top|length > i else none %}
+      <div class="step s{{ i + 1 }}">
+        <span class="who">{{ r.username if r else '—' }}</span>
+        <div class="block"><span class="medal">{{ i + 1 }}</span><strong>{{ '%g'|format(r.total) if r else '' }}</strong><small>{{ 'điểm' if r else '' }}</small></div>
+      </div>
+      {% endfor %}
+    </div>
+    <ol class="rest" start="4">
+      {% for r in top[3:] %}
+      <li{% if r.userId == g.user.userId %} class="you"{% endif %}><span class="pos">{{ loop.index + 3 }}</span><span class="name">{{ r.username }}</span><span class="pts">{{ '%g'|format(r.total) }}</span></li>
+      {% else %}{% if top|length <= 3 %}<li class="empty">Chưa có ai khác trên bảng.</li>{% endif %}{% endfor %}
+    </ol>
+    {% if b.mine %}<p class="mine">Hạng của bạn: <strong>#{{ b.mine.rank }}</strong> / {{ b.count }} · {{ '%g'|format(b.mine.total) }} điểm từ {{ b.mine.n }} đề</p>{% endif %}
+    <a class="cta" href="{{ url_for('practice') }}">Luyện tập ngay</a>
+  </section>
+  <section class="board">
+    <h2>Thi đấu</h2>
+    {% set b = boards['exam'] %}
+    {% set top = b.top %}
+    <div class="podium">
+      {% for i in [1, 0, 2] %}
+      {% set r = top[i] if top|length > i else none %}
+      <div class="step s{{ i + 1 }}">
+        <span class="who">{{ r.username if r else '—' }}</span>
+        <div class="block"><span class="medal">{{ i + 1 }}</span><strong>{{ '%g'|format(r.total) if r else '' }}</strong><small>{{ 'điểm' if r else '' }}</small></div>
+      </div>
+      {% endfor %}
+    </div>
+    <ol class="rest" start="4">
+      {% for r in top[3:] %}
+      <li{% if r.userId == g.user.userId %} class="you"{% endif %}><span class="pos">{{ loop.index + 3 }}</span><span class="name">{{ r.username }}</span><span class="pts">{{ '%g'|format(r.total) }}</span></li>
+      {% else %}{% if top|length <= 3 %}<li class="empty">Chưa có ai khác trên bảng.</li>{% endif %}{% endfor %}
+    </ol>
+    {% if b.mine %}<p class="mine">Hạng của bạn: <strong>#{{ b.mine.rank }}</strong> / {{ b.count }} · {{ '%g'|format(b.mine.total) }} điểm từ {{ b.mine.n }} kỳ thi</p>{% endif %}
+    <a class="cta" href="{{ url_for('contest.list') }}">Tham gia thi ngay</a>
+  </section>
+</div>
+</main>
+</body>
+</html>

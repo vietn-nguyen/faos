@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Bài nộp học máy nâng cao #{{ pred.predId }} · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/prediction.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link on" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}" class="cur">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<div class="wrap">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+<a class="back" href="{{ url_for('task.detail', problemId=pred.problemId, attempt=pred.attemptId) }}">← {{ pred.title }}</a>
+<div class="page-head">
+  <div>
+    <h1>Bài nộp học máy nâng cao #{{ pred.predId }}</h1>
+    <p class="sub">{{ pred.username }} · nộp lúc {{ pred.created|dt }}{% if pred.judged %} · chấm lúc {{ pred.judged|dt }}{% endif %} · giai đoạn {{ pred.phase|phase }}{% if pred.attemptId %} · trong kỳ thi{% endif %}</p>
+  </div>
+</div>
+{% if pred.status in ('queued', 'scoring') %}
+<div class="card result r-wait">
+  <span class="spinner" aria-hidden="true"></span>
+  <div><div class="result-title" id="status">Đang chờ trong hàng đợi...</div><div class="muted">Trang sẽ tự cập nhật khi chấm xong.</div></div>
+</div>
+{% elif pred.status == 'done' %}
+<div class="card result r-ok">
+  <div><div class="result-title">{{ pred.score|pts }} điểm thô</div>
+    <div class="muted">Trung bình có trọng số của các phần điểm, thang 0 đến 100. Điểm chuẩn hoá xem ở bảng xếp hạng.</div></div>
+</div>
+{% else %}
+<div class="card result r-bad">
+  <div><div class="result-title">{{ pred.status|pred_status }}</div><div class="muted">{{ pred.errMess }}</div></div>
+</div>
+{% endif %}
+{% set parts = pred.detail.parts if pred.detail else [] %}
+{% if parts %}
+<div class="card flush">
+  <div class="card-head"><h2>Điểm từng phần</h2><span class="chip mono">{{ pred.fileName }}</span></div>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Phần điểm</th><th>Độ đo</th><th class="right">Điểm thô</th><th>Ghi chú</th></tr></thead>
+    <tbody>
+    {% for p in parts %}
+    <tr><td class="title">{{ p.name }}</td><td>{{ p.metric|metric }}</td>
+      <td class="num right">{{ p.score|pts }}</td>
+      <td>{% if p.error %}<span class="err">{{ p.error }}</span>{% else %}<span class="muted small">Đã chấm</span>{% endif %}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% endif %}
+</div>
+</main>
+{% if pred.status in ('queued', 'scoring') %}
+<script>
+const setStatus = (text) => { document.getElementById("status").textContent = text; };
+async function poll() {
+  try {
+    const r = await fetch("{{ url_for('task.status', predId=pred.predId) }}");
+    const s = await r.json();
+    if (s.status !== "queued" && s.status !== "scoring") { location.reload(); return; }
+    setStatus(s.status === "scoring" ? "Đang chấm..." : "Đang chờ trong hàng đợi...");
+  } catch (e) {
+    setStatus("Mất kết nối, đang thử lại...");
+  }
+  setTimeout(poll, 1000);
+}
+poll();
+</script>
+{% endif %}
+</body>
+</html>

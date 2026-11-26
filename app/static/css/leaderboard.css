@@ -1,0 +1,9 @@
+.rank { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; font-family: var(--mono); font-size: 13px; font-weight: 600; background: var(--grey-soft); color: var(--grey); }
+.rank-1 { background: #f6d463; color: #5c4300; }
+.rank-2 { background: #d5dbe6; color: #3b4558; }
+.rank-3 { background: #e9b891; color: #5e3310; }
+.who { display: inline-flex; align-items: center; gap: 10px; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-d); display: grid; place-items: center; font-weight: 600; font-size: 13px; text-transform: uppercase; }
+.tbl .score { font-size: 15px; font-weight: 600; color: var(--text); }
+.tbl tr.mine td { background: var(--accent-soft); }
+.tbl tbody tr.mine:hover td { background: var(--accent-soft); }

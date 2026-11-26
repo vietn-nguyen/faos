@@ -1,0 +1,5 @@
+.standard { display: grid; gap: 14px; margin-bottom: 18px; }
+.standard .card-head { padding: 0; border: 0; }
+.standard textarea { font-family: var(--mono, "JetBrains Mono", monospace); font-size: 12.5px; line-height: 1.55; }
+.standard .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.standard .actions { display: flex; justify-content: flex-end; gap: 10px; }

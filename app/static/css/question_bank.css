@@ -1,0 +1,10 @@
+.form-end { align-self: end; justify-content: flex-end; }
+.row-actions { display: inline-flex; align-items: center; gap: 6px; }
+.key { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 6px; background: var(--ok-soft); color: var(--ok); font-family: var(--mono); font-size: 13px; font-weight: 600; }
+.filters { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.filters input[type=file] { padding: 5px 8px; max-width: 260px; font-size: 13px; }
+.field input[type=file] { padding: 7px 9px; }
+.wrap { max-width: 1280px; }
+.tbl td { padding: 16px 20px; }
+.tbl .chip, .tbl .pill, .row-actions { white-space: nowrap; }
+.tbl td:nth-child(2) { min-width: 420px; }

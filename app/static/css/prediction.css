@@ -1,0 +1,7 @@
+.result { display: flex; align-items: center; gap: 16px 24px; flex-wrap: wrap; }
+.result-title { font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.r-ok { background: var(--ok-soft); border-color: #bfe5cb; } .r-ok .result-title { color: var(--ok); }
+.r-bad { background: var(--bad-soft); border-color: #f3c7c7; } .r-bad .result-title { color: var(--bad); }
+.spinner { width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--accent); animation: spin .8s linear infinite; flex: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.err { color: var(--bad); font-size: 13px; }

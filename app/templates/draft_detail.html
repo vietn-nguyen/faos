@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Yêu cầu #{{ draft.draftId }} · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/draft_detail.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link on" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<div class="wrap">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+<a class="back" href="{{ url_for('draft.list') }}">← Danh sách yêu cầu tạo đề</a>
+<div class="page-head">
+  <div>
+    <h1>Yêu cầu tạo đề #{{ draft.draftId }}</h1>
+    <div class="meta">
+      <span class="pill s-{{ draft.status }}">{{ draft.status|draft_status }}</span>
+      <span class="chip">{{ draft.kind|kind }}</span>
+      <span class="chip">{{ draft.topic|topic }}</span>
+      <span class="pill d-{{ draft.difficulty }}">{{ draft.difficulty|difficulty }}</span>
+      <span class="muted small mono">{{ draft.inputT or 0 }} token vào · {{ draft.outputT or 0 }} token ra</span>
+    </div>
+  </div>
+</div>
+{% if draft.errMess %}<div class="flash error">{{ draft.errMess }}</div>{% endif %}
+{% set c = draft.context %}
+{% if c %}
+<div class="card context">
+  <h2>Ngữ cảnh lấy từ cơ sở dữ liệu khi tạo</h2>
+  <ul>
+    <li>Tiêu chuẩn #{{ c.standardId }}, bản cập nhật {{ c.updated[:16]|replace('T', ' ') }} (<a href="{{ url_for('draft.standards') }}">xem tiêu chuẩn hiện tại</a>).</li>
+    <li>Đề mẫu gửi kèm: {% for e in c.examples %}<span class="chip">#{{ e.id }}{% if e.is_model %} · mẫu{% endif %}</span> {% else %}không có{% endfor %}</li>
+    <li>Số đề cùng chủ đề được nhắc để tránh trùng: {{ c.titles }}.</li>
+    <li>Lý do từ chối gần đây được nhắc lại: {% if c.rejects %}{{ c.rejects|join('; ') }}{% else %}không có{% endif %}.</li>
+    {% if draft.output and draft.kind == 'question' and draft.output.dropped %}<li>Đã bỏ {{ draft.output.dropped|length }} câu trùng với ngân hàng: {% for d in draft.output.dropped %}“{{ d.content }}”{% if d.id %} (trùng câu #{{ d.id }}){% endif %}{% if not loop.last %}; {% endif %}{% endfor %}.</li>{% endif %}
+  </ul>
+</div>
+{% endif %}
+{% if review %}
+<div class="card review r-{{ review.decision }}">
+  <div><strong>{{ review.username }}</strong> đã {{ 'duyệt' if review.decision == 'approved' else 'từ chối' }}
+    {% if review.reason %}({{ review.reason|reason }}){% endif %} lúc {{ review.created|dt }}.{% if review.note %} {{ review.note }}{% endif %}</div>
+  {% if draft.problemId %}<a class="btn ghost sm" href="{{ url_for('task.update' if draft.kind == 'predict' else 'problem.update', problemId=draft.problemId) }}">Mở đề #{{ draft.problemId }}</a>{% endif %}
+</div>
+{% endif %}
+{% set p = draft.payload %}
+{% if p %}
+<form method="post" class="stack">
+  {% if draft.kind == 'question' %}
+  {% for q in p.questions %}
+  <div class="card stack">
+    {% set i = loop.index0 %}
+    <div class="q-head"><label class="check"><input type="checkbox" name="keep_{{ i }}" checked> Câu {{ loop.index }}: đưa vào ngân hàng</label>
+      <select name="key_{{ i }}" aria-label="Đáp án đúng câu {{ loop.index }}">{% for k in KEYS %}<option value="{{ k }}"{% if k == q.key %} selected{% endif %}>{{ k }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="content_{{ i }}">Nội dung</label><textarea id="content_{{ i }}" name="content_{{ i }}" rows="3">{{ q.content }}</textarea></div>
+    <div class="field"><label for="code_{{ i }}">Mã nguồn (không bắt buộc)</label><textarea id="code_{{ i }}" name="code_{{ i }}" rows="3" class="mono">{{ q.code }}</textarea></div>
+    <div class="q-edit">{% for o in (q.op1, q.op2, q.op3, q.op4) %}
+      <div class="field"><label for="op{{ loop.index }}_{{ i }}">Đáp án {{ KEYS[loop.index0] }}</label><input id="op{{ loop.index }}_{{ i }}" name="op{{ loop.index }}_{{ i }}" value="{{ o }}"></div>{% endfor %}</div>
+    <div class="field"><label for="explain_{{ i }}">Giải thích</label><textarea id="explain_{{ i }}" name="explain_{{ i }}" rows="2">{{ q.explain }}</textarea></div>
+  </div>
+  {% endfor %}
+  {% elif draft.kind == 'predict' %}
+  <div class="card form-grid">
+    <div class="field full"><label for="title">Tiêu đề</label><input id="title" name="title" value="{{ p.title }}"></div>
+    <div class="field full"><label for="statement">Mô tả bài toán</label><textarea id="statement" name="statement" rows="8">{{ p.statement }}</textarea></div>
+    <div class="field"><label for="data_desc">Mô tả dữ liệu</label><textarea id="data_desc" name="data_desc" rows="5">{{ p.data_desc }}</textarea></div>
+    <div class="field"><label for="submit_format">Cấu trúc file nộp</label><textarea id="submit_format" name="submit_format" rows="5">{{ p.submit_format }}</textarea></div>
+  </div>
+  <div class="card flush">
+    <div class="card-head"><h2>Dữ liệu</h2>
+      <span class="muted small">{{ p.rows|length }} dòng{% if draft.output %} · train {{ draft.output.sizes.train }}, public {{ draft.output.sizes.public }}, private {{ draft.output.sizes.private }} · độ đo {{ p.metric|metric }} · đoán lớp phổ biến nhất: {{ draft.output.public|pts }}{% if draft.output.baseline is defined %} · trên tập test: mã mẫu đạt {{ draft.output.baseline|pts }}, đoán lớp phổ biến {{ draft.output.guess|pts }}{% endif %}{% endif %}</span></div>
+    <div class="table-wrap"><table class="tbl">
+      <thead><tr>{% for c in p.columns %}<th>{{ c }}{% if c == p.label_col %} (nhãn){% endif %}</th>{% endfor %}</tr></thead>
+      <tbody>{% for r in p.rows[:12] %}<tr>{% for v in r %}<td class="small">{{ v[:120] }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+    </table></div>
+  </div>
+  <div class="card flush">
+    <div class="card-head"><h2>Mã nguồn mẫu</h2><span class="chip mono">baseline · đã chạy thử trên Judge0</span></div>
+    <pre class="source">{{ p.baseline }}</pre>
+  </div>
+  {% else %}
+  <div class="card form-grid">
+    <div class="field full"><label for="title">Tiêu đề</label><input id="title" name="title" value="{{ p.title }}"></div>
+    <div class="field full"><label for="statement">Đề bài</label><textarea id="statement" name="statement" rows="8">{{ p.statement }}</textarea></div>
+    <div class="field"><label for="input">Input</label><textarea id="input" name="input" rows="3">{{ p.input }}</textarea></div>
+    <div class="field"><label for="output">Output</label><textarea id="output" name="output" rows="3">{{ p.output }}</textarea></div>
+    <div class="field full"><label for="constraints">Giới hạn</label><textarea id="constraints" name="constraints" rows="2">{{ p.constraints }}</textarea></div>
+  </div>
+  <div class="card flush">
+    <div class="card-head"><h2>Lời giải mẫu</h2><span class="chip mono">Python 3.8</span></div>
+    <pre class="source">{{ p.reference_solution }}</pre>
+  </div>
+  <div class="card flush">
+    <div class="card-head"><h2>Test case</h2><span class="muted small">{{ tests|length }} test, output lấy từ lời giải mẫu</span></div>
+    <div class="table-wrap"><table class="tbl">
+      <thead><tr><th>#</th><th>Input</th><th>Output</th></tr></thead>
+      <tbody>
+      {% for t in tests %}
+      <tr class="top"><td class="num">{{ loop.index }}{% if t.sample %} <span class="pill info">Ví dụ</span>{% endif %}</td>
+        <td><pre>{{ t.input[:500].rstrip() }}</pre></td><td><pre>{{ (t.output or '')[:500].rstrip() }}</pre></td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+  {% endif %}
+  {% if draft.status == 'pending_review' %}
+  <div class="card decide">
+    <div><h2>Duyệt bản nháp</h2>
+      <p class="muted small">Chỉnh sửa nội dung ở trên nếu cần rồi chọn "Duyệt", hoặc chọn lý do và "Từ chối".</p></div>
+    <div class="field"><label for="note">Ghi chú (không bắt buộc)</label><input id="note" name="note"></div>
+    <div class="decide-row">
+      <button formaction="{{ url_for('draft.approve', draftId=draft.draftId) }}">Duyệt</button>
+      <span class="reject">
+        <select name="reason" aria-label="Lý do từ chối"><option value="">Lý do từ chối...</option>
+          {% for k, v in REJECT_REASONS.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select>
+        <button formaction="{{ url_for('draft.reject', draftId=draft.draftId) }}" class="danger">Từ chối</button>
+      </span>
+    </div>
+  </div>
+  {% endif %}
+</form>
+{% endif %}
+</div>
+</main>
+</body>
+</html>

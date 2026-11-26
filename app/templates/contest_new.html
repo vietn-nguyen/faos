@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Tạo kỳ thi · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contest_new.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link on" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link on" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<div class="wrap">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+<a class="back" href="{{ url_for('contest.list') }}">← Danh sách kỳ thi</a>
+<div class="page-head"><div><h1>Tạo kỳ thi</h1><p class="sub">Kỳ thi có giờ mở, giờ đóng, thời lượng và chỉ làm một lượt.</p></div></div>
+<form method="post" class="stack">
+  <div class="card form-grid">
+    <div class="field full"><label for="title">Tiêu đề</label><input id="title" name="title" required></div>
+    <div class="field full"><label for="descp">Mô tả</label><input id="descp" name="descp"></div>
+    <div class="field exam-only"><label for="duration">Thời lượng (phút)</label><input id="duration" name="duration" type="number" min="1" value="45" required></div>
+    <div class="field exam-only"><label for="privMin">Giai đoạn private (số phút cuối, 0 = không có)</label><input id="privMin" name="privMin" type="number" min="0" value="0"></div>
+    <div class="field exam-only"><label for="open">Mở lúc</label><input id="open" name="open" type="datetime-local" required></div>
+    <div class="field exam-only"><label for="close">Đóng lúc</label><input id="close" name="close" type="datetime-local" required></div>
+  </div>
+  <div class="card flush">
+    <div class="card-head"><h2>Thiết lập đề, điểm: câu hỏi trắc nghiệm</h2><span class="muted small">{{ questions|length }} câu trong ngân hàng</span></div>
+    <div class="rand">
+      <span class="label">Chọn ngẫu nhiên thêm</span>
+      <input name="rand_count" type="number" min="0" max="200" value="0" aria-label="Số câu ngẫu nhiên">
+      <span class="muted small">câu thuộc</span>
+      <select name="rand_topic" aria-label="Chủ đề"><option value="">mọi chủ đề</option>
+        {% for k, v in TOPICS.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select>
+      <span class="muted small">ngoài các câu đã tích bên dưới, mỗi câu 1 điểm</span>
+    </div>
+    <div class="picks">
+      {% for q in questions %}
+      <div class="pick">
+        <label class="pick-main"><input type="checkbox" name="questionId" value="{{ q.questionId }}"><span>{{ q.content }}</span></label>
+        <span class="chip">{{ q.topic|topic }}</span>
+        <span class="points"><input name="points_question_{{ q.questionId }}" type="number" step="0.5" min="0" value="1" aria-label="Điểm"> điểm</span>
+      </div>
+      {% else %}<div class="empty">Chưa có câu hỏi.</div>{% endfor %}
+    </div>
+  </div>
+  <div class="card flush">
+    <div class="card-head"><h2>Thiết lập đề, điểm: bài toán</h2><span class="muted small">Bài toán lập trình chấm bằng Judge0</span></div>
+    <div class="picks">
+      {% for p in problems if p.kind == 'code' %}
+      <div class="pick">
+        <label class="pick-main"><input type="checkbox" name="problemId" value="{{ p.problemId }}"><span>{{ p.title }}</span></label>
+        <span class="chip">{{ p.topic|topic }}</span><span class="pill d-{{ p.difficulty }}">{{ p.difficulty|difficulty }}</span>{% if not p.is_publish %}<span class="pill">Ẩn</span>{% endif %}
+        <span class="points"><input name="points_problem_{{ p.problemId }}" type="number" step="0.5" min="0" value="10" aria-label="Điểm"> điểm</span>
+      </div>
+      {% else %}<div class="empty">Chưa có bài toán.</div>{% endfor %}
+    </div>
+  </div>
+  <div class="card flush">
+    <div class="card-head"><h2>Thiết lập đề, điểm: học máy nâng cao</h2><span class="muted small">Nộp file kết quả, chấm theo độ đo; điểm = số điểm × điểm bài / 100</span></div>
+    <div class="picks">
+      {% for p in problems if p.kind == 'predict' %}
+      <div class="pick">
+        <label class="pick-main"><input type="checkbox" name="problemId" value="{{ p.problemId }}"><span>{{ p.title }}</span></label>
+        <span class="chip">{{ p.topic|topic }}</span><span class="pill d-{{ p.difficulty }}">{{ p.difficulty|difficulty }}</span>{% if not p.is_publish %}<span class="pill">Ẩn</span>{% endif %}
+        <span class="points"><input name="points_problem_{{ p.problemId }}" type="number" step="0.5" min="0" value="50" aria-label="Điểm"> điểm</span>
+      </div>
+      {% else %}<div class="empty">Chưa có học máy nâng cao.</div>{% endfor %}
+    </div>
+  </div>
+  <div class="actions"><button>Tạo kỳ thi</button><a class="btn ghost" href="{{ url_for('contest.list') }}">Huỷ</a></div>
+</form>
+</div>
+</main>
+</body>
+</html>

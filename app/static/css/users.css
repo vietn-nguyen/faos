@@ -1,0 +1,5 @@
+.create { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+.create .field { flex: 1 1 170px; }
+.who { display: inline-flex; align-items: center; gap: 10px; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-d); display: grid; place-items: center; font-weight: 600; font-size: 13px; text-transform: uppercase; flex: none; }
+.tbl select { padding: 6px 9px; font-size: 13.5px; }

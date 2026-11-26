@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Bài nộp #{{ sub.submissionId }} · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/submission.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link on" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}" class="cur">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<div class="wrap">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+<a class="back" href="{{ url_for('problem.detail', problemId=sub.problemId, attempt=sub.attemptId) }}">← {{ sub.title }}</a>
+<div class="page-head">
+  <div>
+    <h1>Bài nộp #{{ sub.submissionId }}</h1>
+    <p class="sub">Nộp lúc {{ sub.created|dt }}{% if sub.judged %} · chấm lúc {{ sub.judged|dt }}{% endif %}{% if sub.attemptId %} · trong kỳ thi{% endif %}</p>
+  </div>
+</div>
+{% if sub.status in ('queued', 'judging') %}
+<div class="card result r-wait">
+  <span class="spinner" aria-hidden="true"></span>
+  <div><div class="result-title" id="status">Đang chờ trong hàng đợi...</div><div class="muted">Trang sẽ tự cập nhật khi chấm xong.</div></div>
+</div>
+{% elif sub.status == 'system_error' %}
+<div class="card result r-RE">
+  <div><div class="result-title">Lỗi hệ thống khi chấm</div><div class="muted">{{ sub.errMess }}</div></div>
+</div>
+{% else %}
+<div class="card result r-{{ sub.verdict }}">
+  <div>
+    <div class="result-title">{{ sub.verdict|verdict }}</div>
+    <div class="muted">{{ sub.passed }}/{{ sub.total }} test đúng</div>
+  </div>
+  <div class="dots" aria-hidden="true">{% for r in results %}<span class="dot v-{{ r.verdict }}" title="Test {{ loop.index }}: {{ r.verdict }}"></span>{% endfor %}</div>
+</div>
+{% endif %}
+{% if results %}
+<div class="card flush">
+  <div class="card-head"><h2>Kết quả từng test</h2></div>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Test</th><th>Kết quả</th><th>Thời gian</th><th>Bộ nhớ</th><th>Chi tiết</th></tr></thead>
+    <tbody>
+    {% for r in results %}
+    <tr class="top">
+      <td class="num">{{ loop.index }}{% if not r.sample %} <span class="chip">ẩn</span>{% endif %}</td>
+      <td><span class="verdict mono v-{{ r.verdict }}">{{ r.verdict }}</span></td>
+      <td class="num">{{ '%.3f s'|format(r.time) if r.time is not none else '—' }}</td>
+      <td class="num">{{ r.memory ~ ' KB' if r.memory else '—' }}</td>
+      <td class="detail">
+        {% if r.sample %}
+        <div class="io">
+          <div><div class="pre-label">Input</div><pre>{{ r.input.rstrip() }}</pre></div>
+          <div><div class="pre-label">Mong đợi</div><pre>{{ r.output.rstrip() }}</pre></div>
+          <div><div class="pre-label">Output</div><pre>{{ (r.stdout or '').rstrip() }}</pre></div>
+        </div>
+        {% endif %}
+        {% if r.stderr and (r.sample or g.user.role != 'student') %}<div class="pre-label">Lỗi</div><pre>{{ r.stderr }}</pre>{% endif %}
+        {% if not r.sample and (not r.stderr or g.user.role == 'student') %}<span class="muted small">Test ẩn, không hiện dữ liệu.</span>{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% endif %}
+<div class="card flush">
+  <div class="card-head"><h2>Mã nguồn</h2><span class="chip mono">Python 3.8</span></div>
+  <pre class="source">{{ sub.sourceCode }}</pre>
+</div>
+</div>
+</main>
+{% if sub.status in ('queued', 'judging') %}
+<script>
+const setStatus = (text) => { document.getElementById("status").textContent = text; };
+async function poll() {
+  try {
+    const r = await fetch("{{ url_for('submission.status', submissionId=sub.submissionId) }}");
+    const s = await r.json();
+    if (s.status === "done" || s.status === "system_error") { location.reload(); return; }
+    setStatus(s.status === "judging" ? "Đang chấm..." : "Đang chờ trong hàng đợi...");
+  } catch (e) {
+    setStatus("Mất kết nối, đang thử lại...");
+  }
+  setTimeout(poll, 1000);
+}
+poll();
+</script>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Kỳ thi · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contests.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link on" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link on" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+{% set ended = request.args.get('tab') == 'ended' %}
+<div class="head">
+  <div>
+    <h1>Kỳ thi</h1>
+    <p class="lead">Tham gia thi đấu để thử thách bản thân và tìm kiếm những cơ hội mới.</p>
+  </div>
+  {% if g.user.role in ('supervisor', 'admin') %}<a class="btn new" href="{{ url_for('contest.create') }}">+ Tạo kỳ thi</a>{% endif %}
+</div>
+<nav class="tabs" aria-label="Trạng thái kỳ thi">
+  <a href="{{ url_for('contest.list') }}"{% if not ended %} class="on"{% endif %}>Đang diễn ra</a>
+  <a href="{{ url_for('contest.list', tab='ended') }}"{% if ended %} class="on"{% endif %}>Đã kết thúc</a>
+</nav>
+<div class="list">
+{% for c in contests if (c.close <= c.server_now) == ended %}
+<article class="item">
+  <div class="item-main">
+    <div class="item-title">
+      <h2>{{ c.title }}</h2>
+      {% if c.active %}<span class="pill ok">Đang mở</span>{% elif c.open > c.server_now %}<span class="pill info">Sắp mở</span>{% else %}<span class="pill">Đã đóng</span>{% endif %}
+      {% if c.finished %}<span class="pill vio">Đã nộp</span>{% elif c.attemptId %}<span class="pill warn">Đang làm</span>{% endif %}
+    </div>
+    {% if c.descp %}<p class="desc">{{ c.descp }}</p>{% endif %}
+    <dl class="facts">
+      <div><dt>Thời lượng</dt><dd>{{ c.duration }} phút</dd></div>
+      <div><dt>Bắt đầu</dt><dd>{{ (c.open|dt)[11:16] }}<small>{{ (c.open|dt)[:10] }}</small></dd></div>
+      <div><dt>Kết thúc</dt><dd>{{ (c.close|dt)[11:16] }}<small>{{ (c.close|dt)[:10] }}</small></dd></div>
+    </dl>
+  </div>
+  <div class="item-side">
+    {% if c.finished %}
+      <div class="score"><span>Điểm của bạn</span><strong>{{ '%g'|format(c.totalScore) }}</strong></div>
+      <a class="btn ghost" href="{{ url_for('contest.result', contestId=c.contestId) }}">Xem kết quả</a>
+    {% elif c.attemptId or c.active %}
+      <form method="post" action="{{ url_for('contest.join', contestId=c.contestId) }}"
+            {% if not c.attemptId %}onsubmit="return confirm('Bắt đầu tính giờ? Mỗi người chỉ có một lượt thi.')"{% endif %}>
+        <button>{{ 'Tiếp tục' if c.attemptId else 'Tham gia' }}</button></form>
+    {% elif c.open > c.server_now %}<span class="soon">Chưa mở</span>
+    {% endif %}
+    <a class="board" href="{{ url_for('contest.top', contestId=c.contestId) }}">Bảng xếp hạng</a>
+  </div>
+</article>
+{% else %}<div class="none">{{ 'Chưa có kỳ thi nào đã kết thúc.' if ended else 'Hiện chưa có kỳ thi nào đang hoặc sắp diễn ra.' }}</div>{% endfor %}
+</div>
+</main>
+</body>
+</html>

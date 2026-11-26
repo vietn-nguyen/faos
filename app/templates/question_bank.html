@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Câu hỏi trắc nghiệm · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/question_bank.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link on" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}" class="cur">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<div class="wrap">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+<div class="page-head"><div><h1>Danh sách câu hỏi trắc nghiệm</h1><p class="sub">{{ questions|length }} câu trong ngân hàng đề</p></div></div>
+{% set q = editing %}
+<form method="post" class="card flush" enctype="multipart/form-data"
+      action="{{ url_for('question.update', questionId=q.questionId) if q else url_for('question.create') }}">
+  <div class="card-head"><h2>{{ 'Sửa câu hỏi #' ~ q.questionId if q else 'Thêm câu hỏi' }}</h2></div>
+  <div class="card-body form-grid">
+    <div class="field full"><label for="content">Nội dung</label><textarea id="content" name="content" rows="2" required>{{ q.content if q }}</textarea></div>
+    {% for k in KEYS %}
+    <div class="field"><label for="op{{ loop.index }}">Đáp án {{ k }}</label><input id="op{{ loop.index }}" name="op{{ loop.index }}" value="{{ q['op' ~ loop.index] if q }}" required></div>
+    {% endfor %}
+    <div class="field"><label for="key">Đáp án đúng</label><select id="key" name="key">{% for k in KEYS %}<option {{ 'selected' if q and q.key == k }}>{{ k }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="topic">Chủ đề</label><select id="topic" name="topic">{% for k, v in TOPICS.items() %}<option value="{{ k }}" {{ 'selected' if q and q.topic == k }}>{{ v }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="difficulty">Độ khó</label><select id="difficulty" name="difficulty">{% for k, v in DIFFICULTIES.items() %}<option value="{{ k }}" {{ 'selected' if q and q.difficulty == k }}>{{ v }}</option>{% endfor %}</select></div>
+    <div class="field full"><label for="code">Mã nguồn kèm theo (không bắt buộc)</label><textarea id="code" name="code" rows="4" class="code">{{ q.code if q }}</textarea></div>
+    <div class="field full"><label for="explain">Giải thích đáp án (hiện sau khi nộp)</label><textarea id="explain" name="explain" rows="2">{{ q.explain if q }}</textarea></div>
+    <div class="field"><label for="image">Hình minh hoạ (.png, .jpg)</label><input id="image" name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp">
+      {% if q and q.image %}<label class="check small"><input type="checkbox" name="drop_image"> Bỏ hình hiện tại</label>{% endif %}</div>
+    <div class="actions form-end"><button>{{ 'Lưu câu hỏi #' ~ q.questionId if q else 'Thêm câu hỏi' }}</button>
+      {% if q %}<a class="btn ghost" href="{{ url_for('question.bank') }}">Huỷ</a>{% endif %}</div>
+  </div>
+</form>
+<div class="card flush">
+  <div class="card-head">
+    <form class="filters" method="get">
+      <select name="topic" aria-label="Chủ đề"><option value="">Mọi chủ đề</option>
+        {% for k, v in TOPICS.items() %}<option value="{{ k }}" {{ 'selected' if k == topic }}>{{ v }}</option>{% endfor %}</select>
+      <button class="ghost sm">Lọc</button>
+    </form>
+    <form class="filters" method="post" enctype="multipart/form-data" action="{{ url_for('question.importFile') }}">
+      <input name="file" type="file" accept=".json,.csv" aria-label="Tệp câu hỏi" required>
+      <button class="ghost sm" title="Cột: content, op1, op2, op3, op4, key, topic, difficulty, code, explain">Nhập câu hỏi từ tệp</button>
+    </form>
+  </div>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>#</th><th>Câu hỏi</th><th>Đáp án</th><th>Chủ đề</th><th>Độ khó</th><th></th></tr></thead>
+    <tbody>
+    {% for q in questions %}
+    <tr class="top">
+      <td class="num">{{ q.questionId }}</td>
+      <td><span class="title">{{ q.content }}</span>{% if q.code %} <span class="chip">mã</span>{% endif %}{% if q.image %} <span class="chip">hình</span>{% endif %}{% if q.is_model %} <span class="pill info">Câu mẫu</span>{% endif %}
+        <div class="muted small">A. {{ q.op1 }} · B. {{ q.op2 }} · C. {{ q.op3 }} · D. {{ q.op4 }}</div></td>
+      <td><span class="key">{{ q.key }}</span></td>
+      <td><span class="chip">{{ q.topic|topic }}</span></td>
+      <td><span class="pill d-{{ q.difficulty }}">{{ q.difficulty|difficulty }}</span></td>
+      <td class="right"><div class="row-actions">
+        <form method="post" action="{{ url_for('question.setModel', questionId=q.questionId) }}"><input type="hidden" name="topic" value="{{ topic }}"><button class="ghost sm">{{ 'Bỏ mẫu' if q.is_model else 'Đặt làm mẫu' }}</button></form>
+        <a class="btn ghost sm" href="{{ url_for('question.bank', edit=q.questionId) }}">Sửa</a>
+        <form method="post" action="{{ url_for('question.delete', questionId=q.questionId) }}"
+              onsubmit="return confirm('Xoá câu hỏi này?')"><button class="danger sm">Xoá</button></form>
+      </div></td>
+    </tr>
+    {% else %}<tr><td colspan="6" class="empty">Chưa có câu hỏi.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</div>
+</div>
+</main>
+</body>
+</html>

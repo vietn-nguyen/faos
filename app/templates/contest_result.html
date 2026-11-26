@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Kết quả thi · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contest_result.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link{% if contest.kind == 'practice' %} on{% endif %}" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link{% if contest.kind == 'exam' %} on{% endif %}" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link{% if contest.kind == 'practice' %} on{% endif %}" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link{% if contest.kind == 'exam' %} on{% endif %}" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<div class="wrap">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+{% if practice %}<a class="back" href="{{ url_for('practice') }}">← Đề luyện tập</a>
+<div class="page-head"><div><h1>Kết quả luyện tập</h1><p class="sub">{{ contest.title }}</p></div>
+  <form method="post" action="{{ url_for('contest.retry', contestId=contest.contestId) }}"><button class="ghost">Làm lại phần trắc nghiệm</button></form></div>
+{% else %}<a class="back" href="{{ url_for('contest.list') }}">← Danh sách kỳ thi</a>
+<div class="page-head"><div><h1>Kết quả thi</h1><p class="sub">{{ contest.title }}</p></div>
+  <a class="btn ghost" href="{{ url_for('contest.top', contestId=contest.contestId) }}">Xem bảng xếp hạng</a></div>{% endif %}
+{% set max_points = (answers|sum(attribute='points')) + (problems|sum(attribute='points')) + (tasks|sum(attribute='points')) %}
+<div class="card summary">
+  <div class="total">
+    <span class="stat-label">Điểm thi cuối cùng</span>
+    <span class="total-value">{{ '%g'|format(attempt.totalScore) }}<span class="total-max"> / {{ '%g'|format(max_points) }}</span></span>
+  </div>
+  <dl class="facts">
+    <div><dt>Bắt đầu</dt><dd>{{ attempt.start|dt }}</dd></div>
+    <div><dt>Nộp</dt><dd>{{ attempt.finished|dt }}</dd></div>
+    <div><dt>Thời gian làm</dt><dd>{{ attempt.duration // 60 }} phút {{ attempt.duration % 60 }} giây</dd></div>
+  </dl>
+</div>
+{% if answers %}
+<div class="card flush">
+  <div class="card-head"><h2>Trắc nghiệm</h2><span class="muted small">Đúng {{ answers|selectattr('is_correct')|list|length }}/{{ answers|length }} câu</span></div>
+  {% if not closed %}
+  <p class="muted small pad">Đáp án và giải thích hiện sau khi kỳ thi đóng lúc {{ contest.close|dt }}.</p>
+  {% else %}
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Câu</th><th>Bạn chọn</th><th>Đáp án</th><th class="right">Điểm</th></tr></thead>
+    <tbody>
+    {% for a in answers %}
+    <tr>
+      <td>{{ a.content }}{% if a.explain %}<details class="why"><summary>Xem giải thích</summary>{{ a.explain }}</details>{% endif %}</td>
+      <td><span class="key {{ 'k-ok' if a.is_correct else 'k-bad' }}">{{ a.selected or '—' }}</span></td>
+      <td><span class="key">{{ a.key }}</span></td>
+      <td class="num right">{{ '%g'|format(a.points if a.is_correct else 0) }} / {{ '%g'|format(a.points) }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% endif %}
+</div>
+{% endif %}
+{% if problems %}
+<div class="card flush">
+  <div class="card-head"><h2>Bài toán</h2><span class="muted small">Tính theo lần nộp có nhiều test đúng nhất</span></div>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Bài</th><th>Test đạt (tốt nhất)</th><th class="right">Điểm</th></tr></thead>
+    <tbody>
+    {% for p in problems %}
+    <tr>
+      <td><span class="title">{{ p.title }}</span>{% if p.pending %} <span class="pill warn">Đang chấm</span>{% endif %}</td>
+      <td><div class="ratio"><span class="meter"><span style="width: {{ (p.best_ratio * 100)|round|int }}%"></span></span><span class="num">{{ (p.best_ratio * 100)|round|int }}%</span></div></td>
+      <td class="num right">{{ '%g'|format((p.points * p.best_ratio)|round(2)) }} / {{ '%g'|format(p.points) }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% endif %}
+{% if tasks %}
+<div class="card flush">
+  <div class="card-head"><h2>Học máy nâng cao</h2><span class="muted small">Tính theo bài nộp tốt nhất của giai đoạn {{ tasks[0].phase|phase }}, điểm chuẩn hoá theo bảng xếp hạng kỳ thi</span></div>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Bài</th><th>Điểm bài</th><th class="right">Điểm</th></tr></thead>
+    <tbody>
+    {% for t in tasks %}
+    <tr>
+      <td><span class="title">{{ t.title }}</span></td>
+      <td><div class="ratio"><span class="meter"><span style="width: {{ t.score|round|int }}%"></span></span><span class="num">{{ t.score|pts }}</span></div></td>
+      <td class="num right">{{ '%g'|format(t.earned) }} / {{ '%g'|format(t.points) }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% endif %}
+</div>
+</main>
+</body>
+</html>

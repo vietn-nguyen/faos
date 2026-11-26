@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>{{ contest.title }} · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contest_take.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav{% if g.user and g.user.role in ('supervisor', 'admin') %} staff{% endif %}" aria-label="Điều hướng chính">
+    <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-icon-64.png') }}" alt=""><img class="logo-text" src="{{ url_for('static', filename='img/faos-text-160.png') }}" alt="faos"></a>
+    {% if g.user %}
+    {% if g.user.role == 'admin' %}
+    <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+    <a class="nav-link" href="{{ url_for('user.users') }}">Người dùng</a>
+    {% endif %}
+    {% if g.user.role in ('supervisor', 'admin') %}
+    <div class="drop">
+      <button class="nav-link" type="button" aria-haspopup="true">Ngân hàng đề<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <a href="{{ url_for('problem.bank') }}">Bài toán</a>
+        <a href="{{ url_for('question.bank') }}">Câu hỏi trắc nghiệm</a>
+        <a href="{{ url_for('task.bank') }}">Học máy nâng cao</a>
+      </div>
+    </div>
+    <a class="nav-link" href="{{ url_for('draft.list') }}">Tạo đề tự động</a>
+    <a class="nav-link{% if contest.kind == 'practice' %} on{% endif %}" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link{% if contest.kind == 'exam' %} on{% endif %}" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    {% else %}
+    <a class="nav-link{% if contest.kind == 'practice' %} on{% endif %}" href="{{ url_for('practice') }}">Luyện tập</a>
+    <a class="nav-link{% if contest.kind == 'exam' %} on{% endif %}" href="{{ url_for('contest.list') }}">Kỳ thi</a>
+    <a class="nav-link" href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+    <a class="nav-link" href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+    {% endif %}
+    <div class="user">
+      <button class="user-btn" type="button" aria-haspopup="true"><span class="avatar">{{ g.user.username[0] }}</span><span class="user-name">{{ g.user.username }}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="menu">
+        <div class="menu-head"><span class="menu-name">{{ g.user.username }}</span><span class="menu-role">{{ g.user.role|role }}</span></div>
+        <a href="{{ url_for('user.viewProfile') }}">Hồ sơ</a>
+        {% if g.user.role in ('supervisor', 'admin') %}
+        <a href="{{ url_for('ranking') }}">Bảng xếp hạng</a>
+        <a href="{{ url_for('submission.history') }}">Lịch sử làm</a>
+        {% endif %}
+        <a class="logout" href="{{ url_for('user.logout') }}">Đăng xuất</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="nav-link login" href="{{ url_for('user.login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page">
+<div class="wrap">
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+<div class="exam-bar">
+  <div class="exam-info">
+    <div class="exam-title">{{ contest.title }}</div>
+    <div class="muted small" id="progress">Lượt thi của {{ g.user.username }}</div>
+  </div>
+  {% if contest.kind == 'exam' %}<div class="timer" id="timer">--:--</div>{% else %}<div class="pill info">Đề luyện tập · không giới hạn giờ</div>{% endif %}
+  <div class="actions">
+    <button type="submit" form="contest-form" class="ghost" formaction="{{ url_for('contest.answer', contestId=contest.contestId) }}">Lưu đáp án đã chọn</button>
+    <button type="submit" form="contest-form" onclick="return confirm('{{ 'Nộp bài và kết thúc lượt thi?' if contest.kind == 'exam' else 'Nộp bài và xem đáp án?' }}')">Nộp bài</button>
+  </div>
+</div>
+<form id="contest-form" method="post" action="{{ url_for('contest.submit', contestId=contest.contestId) }}" class="stack">
+  {% if questions %}
+  <h3>Trắc nghiệm</h3>
+  {% for q in questions %}
+  <fieldset class="card q">
+    <legend class="q-head"><span class="q-num">Câu {{ loop.index }}</span><span class="muted small">{{ '%g'|format(q.points) }} điểm</span></legend>
+    <p class="q-text">{{ q.content }}</p>
+    {% if q.code %}<pre class="q-code">{{ q.code }}</pre>{% endif %}
+    {% if q.image %}<img class="q-img" src="{{ url_for('question.image', questionId=q.questionId) }}" alt="Hình minh hoạ câu {{ loop.index }}">{% endif %}
+    <div class="opts">
+      {% for k in KEYS %}
+      <label class="opt"><input type="radio" name="q{{ q.questionId }}" value="{{ k }}" {{ 'checked' if q.selected == k }}><span class="opt-key">{{ k }}</span><span>{{ q['op' ~ loop.index] }}</span></label>
+      {% endfor %}
+    </div>
+  </fieldset>
+  {% endfor %}
+  {% endif %}
+  {% if problems %}
+  <h3>Bài toán</h3>
+  <div class="card flush">
+    <div class="table-wrap"><table class="tbl">
+      <thead><tr><th>Bài</th><th>Điểm</th><th>Kết quả tốt nhất</th><th></th></tr></thead>
+      <tbody>
+      {% for p in problems %}
+      <tr>
+        <td><span class="title">{{ p.title }}</span> <span class="chip">{{ p.topic|topic }}</span> <span class="pill d-{{ p.difficulty }}">{{ p.difficulty|difficulty }}</span></td>
+        <td class="num">{{ '%g'|format(p.points) }}</td>
+        <td>{% if p.best_ratio is not none %}<span class="num">{{ (p.best_ratio * 100)|round|int }}% test</span>{% else %}<span class="muted">Chưa nộp</span>{% endif %}</td>
+        <td class="right"><button type="submit" class="ghost sm" formaction="{{ url_for('contest.answer', contestId=contest.contestId) }}"
+              name="next" value="{{ url_for('problem.detail', problemId=p.problemId, attempt=attempt.attemptId) }}">Làm bài</button></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+  {% endif %}
+  {% if tasks %}
+  <h3>Học máy nâng cao <span class="pill {{ 'vio' if phase == 'private' else 'info' }}">Giai đoạn {{ phase|phase }}</span></h3>
+  <div class="card flush">
+    <div class="table-wrap"><table class="tbl">
+      <thead><tr><th>Bài</th><th>Điểm</th><th>Điểm bài ({{ tasks[0].phase|phase }})</th><th></th></tr></thead>
+      <tbody>
+      {% for t in tasks %}
+      <tr>
+        <td><span class="title">{{ t.title }}</span> <span class="chip">{{ t.topic|topic }}</span> <span class="pill d-{{ t.difficulty }}">{{ t.difficulty|difficulty }}</span></td>
+        <td class="num">{{ '%g'|format(t.points) }}</td>
+        <td class="num">{{ t.score|pts }} / 100</td>
+        <td class="right"><button type="submit" class="ghost sm" formaction="{{ url_for('contest.answer', contestId=contest.contestId) }}"
+              name="next" value="{{ url_for('task.detail', problemId=t.problemId, attempt=attempt.attemptId) }}">Làm bài</button></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+  {% endif %}
+  {% if problems or tasks %}
+  <p class="muted small">Đáp án trắc nghiệm đã chọn được lưu trước khi chuyển sang trang bài toán hoặc bài học máy nâng cao.</p>
+  {% endif %}
+</form>
+</div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const pad = (n) => String(n).padStart(2, "0");
+const end = Date.now() + {{ seconds_left }} * 1000;
+
+function tick() {
+  if (!$("timer")) return;
+  const left = Math.max(0, Math.round((end - Date.now()) / 1000));
+  const h = Math.floor(left / 3600), m = Math.floor(left % 3600 / 60), s = left % 60;
+  $("timer").textContent = (h ? h + ":" + pad(m) : m) + ":" + pad(s);
+  $("timer").classList.toggle("low", left <= 60);
+  if (left === 0) { $("contest-form").submit(); return; }
+  setTimeout(tick, 500);
+}
+
+function setProgress() {
+  const total = document.querySelectorAll(".q").length;
+  if (!total) return;
+  const done = document.querySelectorAll(".q input:checked").length;
+  $("progress").textContent = "Đã trả lời " + done + "/" + total + " câu trắc nghiệm";
+}
+
+$("contest-form").addEventListener("change", setProgress);
+setProgress();
+tick();
+</script>
+</body>
+</html>

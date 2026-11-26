@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/faos-icon-64.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/faos-icon-180.png') }}">
+<title>Đăng ký · faos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@1..144,1..1000&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+</head>
+<body>
+<main class="page">
+<div class="card">
+  <a class="art" href="{{ url_for('index') }}" aria-label="Trang chủ"><img src="{{ url_for('static', filename='img/faos-hero.png') }}" alt=""></a>
+  <section class="side">
+    <div class="box">
+      <a class="logo" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/faos-text.png') }}" alt="faos"></a>
+      <h1>ĐĂNG KÝ</h1>
+      {% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+      <form method="post">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required autofocus autocomplete="email">
+        <label for="name">Tên đăng nhập</label>
+        <input id="name" name="name" required autocomplete="username">
+        <label for="password">Mật khẩu</label>
+        <input id="password" name="password" type="password" minlength="6" required autocomplete="new-password" placeholder="Ít nhất 6 ký tự">
+        <button>Đăng ký</button>
+      </form>
+      <p class="alt">Đã có tài khoản? <a href="{{ url_for('user.login') }}">Đăng nhập</a></p>
+    </div>
+  </section>
+</div>
+</main>
+</body>
+</html>
