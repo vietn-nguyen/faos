@@ -1,0 +1,241 @@
+id,text,label
+R0000,"Chuột có màn hình hay lỗi, mình mua lúc giảm giá.",NEG
+R0001,"Chuột có âm thanh bình thường, shop phản hồi chậm.",NEU
+R0002,Điện thoại có giao hàng ổn áp.,POS
+R0003,"Laptop có pin như mô tả, dù giá vượt mong đợi.",NEU
+R0004,"Chuột có đóng gói ổn áp, mình mua lúc giảm giá.",POS
+R0005,Bàn phím có độ bền ở mức trung bình.,NEU
+R0006,Màn hình có giao hàng hay lỗi.,NEG
+R0007,Bàn phím có độ bền quá tệ.,NEG
+R0008,"Loa có thiết kế đáng tiền, shop phản hồi chậm, dù pin thất vọng.",POS
+R0009,Điện thoại có màn hình ổn áp.,POS
+R0010,Bàn phím có độ bền đáng tiền.,POS
+R0011,"Loa có thiết kế tuyệt vời, sẽ mua lại.",POS
+R0012,"Điện thoại có màn hình ổn áp, sẽ mua lại.",POS
+R0013,"Chuột có giá xuất sắc, sẽ mua lại.",POS
+R0014,"Tai nghe có giao hàng không đáng tiền, sẽ mua lại, dù pin tạm được.",NEG
+R0015,"Loa có thiết kế rất tốt, sẽ mua lại.",POS
+R0016,"Điện thoại có đóng gói kém, shop phản hồi chậm, dù giá vượt mong đợi.",NEG
+R0017,"Bàn phím có pin như mô tả, dùng một tuần rồi.",NEU
+R0018,"Laptop có màn hình hay lỗi, sẽ mua lại.",NEG
+R0019,"Laptop có độ bền tuyệt vời, mình mua lúc giảm giá.",POS
+R0020,"Laptop có giá xuất sắc, shop phản hồi chậm.",POS
+R0021,"Tai nghe có giao hàng bình thường, dù giá tệ hại.",NEU
+R0022,"Loa có độ bền ở mức trung bình, mình mua lúc giảm giá.",NEU
+R0023,"Laptop có thiết kế tạm được, sẽ mua lại.",NEU
+R0024,"Tai nghe có độ bền tạm được, sẽ mua lại.",NEU
+R0025,"Màn hình có giao hàng ổn áp, sẽ mua lại, dù độ bền kém.",POS
+R0026,"Laptop có thiết kế không có gì đặc biệt, sẽ mua lại.",NEU
+R0027,"Laptop có pin quá tệ, shop phản hồi chậm.",NEG
+R0028,"Màn hình có pin bình thường, mình mua lúc giảm giá.",NEU
+R0029,"Tai nghe có độ bền kém, sẽ mua lại.",NEG
+R0030,Chuột có đóng gói xuất sắc.,POS
+R0031,Laptop có đóng gói không có gì đặc biệt.,NEU
+R0032,"Loa có pin ổn áp, mình mua lúc giảm giá, dù giao hàng như mô tả.",POS
+R0033,"Tai nghe có thiết kế rất tốt, dù giao hàng không có gì đặc biệt.",POS
+R0034,"Chuột có màn hình không đáng tiền, mình mua lúc giảm giá, dù độ bền vượt mong đợi.",NEG
+R0035,"Chuột có pin tuyệt vời, dù độ bền bình thường.",POS
+R0036,"Màn hình có âm thanh tệ hại, mình mua lúc giảm giá.",NEG
+R0037,"Sạc dự phòng có màn hình ổn áp, sẽ mua lại.",POS
+R0038,"Màn hình có giá ở mức trung bình, sẽ mua lại.",NEU
+R0039,"Bàn phím có đóng gói thất vọng, sẽ mua lại.",NEG
+R0040,"Điện thoại có thiết kế kém, sẽ mua lại, dù độ bền tạm được.",NEG
+R0041,"Loa có màn hình tệ hại, dùng một tuần rồi.",NEG
+R0042,Chuột có đóng gói bình thường.,NEU
+R0043,"Điện thoại có độ bền như mô tả, dùng một tuần rồi.",NEU
+R0044,"Điện thoại có âm thanh ở mức trung bình, shop phản hồi chậm.",NEU
+R0045,"Bàn phím có âm thanh quá tệ, dù đóng gói rất tốt.",NEG
+R0046,"Bàn phím có giá ở mức trung bình, dùng một tuần rồi.",NEU
+R0047,"Chuột có pin tuyệt vời, sẽ mua lại.",POS
+R0048,"Laptop có giao hàng tệ hại, sẽ mua lại, dù âm thanh ở mức trung bình.",NEG
+R0049,"Bàn phím có pin không đáng tiền, mình mua lúc giảm giá.",NEG
+R0050,Sạc dự phòng có màn hình không có gì đặc biệt.,NEU
+R0051,"Tai nghe có giá tuyệt vời, shop phản hồi chậm.",POS
+R0052,Sạc dự phòng có độ bền tệ hại.,NEG
+R0053,"Điện thoại có màn hình đáng tiền, mình mua lúc giảm giá.",POS
+R0054,Chuột có pin thất vọng.,NEG
+R0055,"Laptop có đóng gói xuất sắc, sẽ mua lại.",POS
+R0056,"Chuột có màn hình như mô tả, dù màn hình vượt mong đợi.",NEU
+R0057,"Màn hình có âm thanh như mô tả, mình mua lúc giảm giá.",NEU
+R0058,"Màn hình có độ bền ở mức trung bình, mình mua lúc giảm giá.",NEU
+R0059,"Màn hình có màn hình tuyệt vời, shop phản hồi chậm.",POS
+R0060,"Điện thoại có giao hàng bình thường, mình mua lúc giảm giá.",NEU
+R0061,Loa có thiết kế ở mức trung bình.,NEU
+R0062,"Chuột có giao hàng ổn áp, dùng một tuần rồi.",POS
+R0063,"Laptop có đóng gói không đáng tiền, shop phản hồi chậm.",NEG
+R0064,Bàn phím có giao hàng vượt mong đợi.,POS
+R0065,"Điện thoại có pin tuyệt vời, sẽ mua lại.",POS
+R0066,"Màn hình có đóng gói không có gì đặc biệt, sẽ mua lại.",NEU
+R0067,"Chuột có thiết kế vượt mong đợi, mình mua lúc giảm giá.",POS
+R0068,Loa có pin ổn áp.,POS
+R0069,Laptop có giá như mô tả.,NEU
+R0070,Laptop có giá xuất sắc.,POS
+R0071,"Sạc dự phòng có đóng gói tuyệt vời, sẽ mua lại.",POS
+R0072,"Tai nghe có âm thanh tuyệt vời, sẽ mua lại.",POS
+R0073,"Loa có thiết kế không đáng tiền, shop phản hồi chậm.",NEG
+R0074,Laptop có giá ở mức trung bình.,NEU
+R0075,Tai nghe có giá vượt mong đợi.,POS
+R0076,Tai nghe có đóng gói hay lỗi.,NEG
+R0077,Chuột có thiết kế rất tốt.,POS
+R0078,"Chuột có âm thanh tạm được, sẽ mua lại, dù âm thanh đáng tiền.",NEU
+R0079,Tai nghe có pin tạm được.,NEU
+R0080,"Sạc dự phòng có giao hàng ổn áp, shop phản hồi chậm.",POS
+R0081,Bàn phím có đóng gói quá tệ.,NEG
+R0082,"Laptop có giao hàng ổn áp, dùng một tuần rồi.",POS
+R0083,"Bàn phím có âm thanh quá tệ, mình mua lúc giảm giá.",NEG
+R0084,"Tai nghe có giao hàng hay lỗi, mình mua lúc giảm giá.",NEG
+R0085,Sạc dự phòng có độ bền không có gì đặc biệt.,NEU
+R0086,"Loa có âm thanh đáng tiền, mình mua lúc giảm giá.",POS
+R0087,Laptop có giao hàng thất vọng.,NEG
+R0088,Màn hình có màn hình quá tệ.,NEG
+R0089,Điện thoại có giá không có gì đặc biệt.,NEU
+R0090,Loa có âm thanh vượt mong đợi.,POS
+R0091,"Bàn phím có thiết kế không đáng tiền, mình mua lúc giảm giá, dù giá đáng tiền.",NEG
+R0092,Loa có pin thất vọng.,NEG
+R0093,"Màn hình có độ bền đáng tiền, dùng một tuần rồi.",POS
+R0094,"Loa có thiết kế ở mức trung bình, dù giao hàng tuyệt vời.",NEU
+R0095,"Chuột có âm thanh không đáng tiền, mình mua lúc giảm giá.",NEG
+R0096,"Loa có màn hình ổn áp, dùng một tuần rồi.",POS
+R0097,"Màn hình có đóng gói như mô tả, dùng một tuần rồi.",NEU
+R0098,Màn hình có độ bền quá tệ.,NEG
+R0099,Điện thoại có âm thanh ở mức trung bình.,NEU
+R0100,Loa có pin hay lỗi.,NEG
+R0101,"Bàn phím có giao hàng xuất sắc, shop phản hồi chậm.",POS
+R0102,"Điện thoại có thiết kế xuất sắc, shop phản hồi chậm.",POS
+R0103,"Tai nghe có pin vượt mong đợi, shop phản hồi chậm.",POS
+R0104,"Điện thoại có đóng gói vượt mong đợi, sẽ mua lại.",POS
+R0105,"Laptop có giao hàng không đáng tiền, mình mua lúc giảm giá.",NEG
+R0106,"Loa có đóng gói như mô tả, sẽ mua lại.",NEU
+R0107,Laptop có giá ở mức trung bình.,NEU
+R0108,"Sạc dự phòng có độ bền kém, mình mua lúc giảm giá.",NEG
+R0109,"Bàn phím có độ bền tạm được, sẽ mua lại.",NEU
+R0110,Bàn phím có pin bình thường.,NEU
+R0111,"Điện thoại có pin quá tệ, sẽ mua lại.",NEG
+R0112,"Tai nghe có âm thanh vượt mong đợi, sẽ mua lại.",POS
+R0113,"Chuột có màn hình kém, sẽ mua lại.",NEG
+R0114,"Laptop có thiết kế quá tệ, shop phản hồi chậm.",NEG
+R0115,Bàn phím có màn hình ở mức trung bình.,NEU
+R0116,"Sạc dự phòng có âm thanh xuất sắc, mình mua lúc giảm giá.",POS
+R0117,"Laptop có giao hàng không có gì đặc biệt, mình mua lúc giảm giá, dù thiết kế hay lỗi.",NEU
+R0118,"Loa có màn hình xuất sắc, shop phản hồi chậm.",POS
+R0119,Tai nghe có độ bền tuyệt vời.,POS
+R0120,"Màn hình có màn hình không có gì đặc biệt, dùng một tuần rồi.",NEU
+R0121,Sạc dự phòng có đóng gói đáng tiền.,POS
+R0122,"Màn hình có màn hình hay lỗi, dùng một tuần rồi.",NEG
+R0123,"Loa có giá rất tốt, dùng một tuần rồi.",POS
+R0124,"Sạc dự phòng có giao hàng vượt mong đợi, shop phản hồi chậm.",POS
+R0125,"Sạc dự phòng có giao hàng như mô tả, sẽ mua lại.",NEU
+R0126,"Laptop có âm thanh bình thường, shop phản hồi chậm.",NEU
+R0127,Điện thoại có giá hay lỗi.,NEG
+R0128,Màn hình có pin ở mức trung bình.,NEU
+R0129,"Tai nghe có đóng gói quá tệ, dùng một tuần rồi.",NEG
+R0130,Tai nghe có pin tệ hại.,NEG
+R0131,"Loa có giá tạm được, shop phản hồi chậm.",NEU
+R0132,"Sạc dự phòng có màn hình ở mức trung bình, dùng một tuần rồi.",NEU
+R0133,"Laptop có màn hình không đáng tiền, mình mua lúc giảm giá.",NEG
+R0134,"Điện thoại có giao hàng xuất sắc, dùng một tuần rồi.",POS
+R0135,"Tai nghe có màn hình hay lỗi, dù pin bình thường.",NEG
+R0136,Loa có âm thanh thất vọng.,NEG
+R0137,"Loa có âm thanh không có gì đặc biệt, sẽ mua lại.",NEU
+R0138,"Màn hình có độ bền bình thường, shop phản hồi chậm.",NEU
+R0139,Màn hình có âm thanh tuyệt vời.,POS
+R0140,Chuột có pin đáng tiền.,POS
+R0141,Bàn phím có giá hay lỗi.,NEG
+R0142,"Bàn phím có màn hình tạm được, dùng một tuần rồi.",NEU
+R0143,"Chuột có độ bền không đáng tiền, shop phản hồi chậm.",NEG
+R0144,"Tai nghe có màn hình thất vọng, shop phản hồi chậm, dù giao hàng vượt mong đợi.",NEG
+R0145,Màn hình có pin tạm được.,NEU
+R0146,"Chuột có giá tệ hại, shop phản hồi chậm.",NEG
+R0147,"Loa có âm thanh đáng tiền, sẽ mua lại.",POS
+R0148,"Laptop có độ bền như mô tả, mình mua lúc giảm giá, dù pin tuyệt vời.",NEU
+R0149,"Laptop có thiết kế đáng tiền, dùng một tuần rồi.",POS
+R0150,Tai nghe có màn hình ở mức trung bình.,NEU
+R0151,"Màn hình có pin tạm được, shop phản hồi chậm.",NEU
+R0152,Tai nghe có màn hình tạm được.,NEU
+R0153,"Chuột có âm thanh không có gì đặc biệt, dùng một tuần rồi.",NEU
+R0154,"Màn hình có màn hình xuất sắc, dù âm thanh quá tệ.",POS
+R0155,Loa có màn hình bình thường.,NEU
+R0156,"Chuột có giá kém, mình mua lúc giảm giá, dù giá vượt mong đợi.",NEG
+R0157,Màn hình có giao hàng vượt mong đợi.,POS
+R0158,"Loa có thiết kế kém, sẽ mua lại.",NEG
+R0159,"Tai nghe có đóng gói không có gì đặc biệt, dùng một tuần rồi.",NEU
+R0160,"Sạc dự phòng có màn hình ở mức trung bình, dù âm thanh xuất sắc.",NEU
+R0161,"Laptop có âm thanh tạm được, shop phản hồi chậm, dù thiết kế quá tệ.",NEU
+R0162,"Điện thoại có âm thanh rất tốt, shop phản hồi chậm.",POS
+R0163,"Sạc dự phòng có giao hàng vượt mong đợi, sẽ mua lại.",POS
+R0164,"Loa có màn hình đáng tiền, shop phản hồi chậm.",POS
+R0165,Loa có đóng gói tạm được.,NEU
+R0166,"Điện thoại có độ bền không có gì đặc biệt, sẽ mua lại.",NEU
+R0167,"Chuột có thiết kế như mô tả, shop phản hồi chậm.",NEU
+R0168,Màn hình có thiết kế hay lỗi.,NEG
+R0169,"Màn hình có giá không có gì đặc biệt, mình mua lúc giảm giá.",NEU
+R0170,Bàn phím có giá vượt mong đợi.,POS
+R0171,"Tai nghe có âm thanh tuyệt vời, shop phản hồi chậm.",POS
+R0172,"Sạc dự phòng có đóng gói bình thường, dùng một tuần rồi.",NEU
+R0173,"Chuột có âm thanh tuyệt vời, mình mua lúc giảm giá.",POS
+R0174,Tai nghe có độ bền tạm được.,NEU
+R0175,"Laptop có thiết kế quá tệ, dùng một tuần rồi.",NEG
+R0176,"Bàn phím có đóng gói thất vọng, sẽ mua lại.",NEG
+R0177,"Chuột có pin ổn áp, sẽ mua lại.",POS
+R0178,"Laptop có độ bền ở mức trung bình, mình mua lúc giảm giá.",NEU
+R0179,"Laptop có giá ổn áp, shop phản hồi chậm, dù thiết kế như mô tả.",POS
+R0180,"Laptop có đóng gói hay lỗi, sẽ mua lại.",NEG
+R0181,Sạc dự phòng có pin bình thường.,NEU
+R0182,Loa có màn hình vượt mong đợi.,POS
+R0183,"Loa có độ bền không đáng tiền, shop phản hồi chậm.",NEG
+R0184,"Loa có giao hàng bình thường, mình mua lúc giảm giá, dù giao hàng không đáng tiền.",NEU
+R0185,Sạc dự phòng có pin đáng tiền.,POS
+R0186,"Loa có đóng gói kém, mình mua lúc giảm giá.",NEG
+R0187,"Tai nghe có màn hình tuyệt vời, mình mua lúc giảm giá.",POS
+R0188,"Chuột có thiết kế vượt mong đợi, sẽ mua lại.",POS
+R0189,Loa có giá bình thường.,NEU
+R0190,"Sạc dự phòng có giao hàng như mô tả, sẽ mua lại.",NEU
+R0191,Loa có thiết kế bình thường.,NEU
+R0192,"Tai nghe có màn hình rất tốt, dùng một tuần rồi.",POS
+R0193,Điện thoại có đóng gói thất vọng.,NEG
+R0194,Loa có âm thanh kém.,NEG
+R0195,"Màn hình có pin ổn áp, dùng một tuần rồi.",POS
+R0196,"Laptop có màn hình thất vọng, sẽ mua lại.",NEG
+R0197,"Điện thoại có giá không có gì đặc biệt, dùng một tuần rồi.",NEU
+R0198,Laptop có giá vượt mong đợi.,POS
+R0199,"Tai nghe có độ bền xuất sắc, dùng một tuần rồi.",POS
+R0200,Loa có âm thanh kém.,NEG
+R0201,"Loa có thiết kế thất vọng, sẽ mua lại.",NEG
+R0202,Bàn phím có độ bền tuyệt vời.,POS
+R0203,Màn hình có độ bền không có gì đặc biệt.,NEU
+R0204,Bàn phím có độ bền tuyệt vời.,POS
+R0205,"Tai nghe có màn hình rất tốt, shop phản hồi chậm.",POS
+R0206,"Điện thoại có pin vượt mong đợi, mình mua lúc giảm giá.",POS
+R0207,"Loa có thiết kế thất vọng, dùng một tuần rồi.",NEG
+R0208,Bàn phím có âm thanh đáng tiền.,POS
+R0209,"Laptop có pin vượt mong đợi, shop phản hồi chậm.",POS
+R0210,Loa có pin ở mức trung bình.,NEU
+R0211,Sạc dự phòng có đóng gói ở mức trung bình.,NEU
+R0212,"Laptop có âm thanh bình thường, mình mua lúc giảm giá.",NEU
+R0213,"Chuột có độ bền tạm được, dùng một tuần rồi.",NEU
+R0214,"Chuột có độ bền rất tốt, sẽ mua lại.",POS
+R0215,"Điện thoại có màn hình tạm được, dùng một tuần rồi.",NEU
+R0216,"Chuột có giao hàng vượt mong đợi, shop phản hồi chậm.",POS
+R0217,"Tai nghe có thiết kế tuyệt vời, mình mua lúc giảm giá.",POS
+R0218,"Bàn phím có âm thanh bình thường, dùng một tuần rồi.",NEU
+R0219,"Sạc dự phòng có độ bền như mô tả, shop phản hồi chậm, dù giao hàng đáng tiền.",NEU
+R0220,Laptop có màn hình xuất sắc.,POS
+R0221,"Điện thoại có đóng gói không đáng tiền, shop phản hồi chậm.",NEG
+R0222,"Điện thoại có âm thanh ổn áp, mình mua lúc giảm giá.",POS
+R0223,"Chuột có pin rất tốt, sẽ mua lại.",POS
+R0224,"Laptop có thiết kế ở mức trung bình, mình mua lúc giảm giá.",NEU
+R0225,Tai nghe có pin tệ hại.,NEG
+R0226,Bàn phím có độ bền không có gì đặc biệt.,NEU
+R0227,"Loa có màn hình rất tốt, sẽ mua lại.",POS
+R0228,"Bàn phím có pin thất vọng, shop phản hồi chậm.",NEG
+R0229,"Sạc dự phòng có âm thanh ổn áp, shop phản hồi chậm.",POS
+R0230,"Loa có giao hàng rất tốt, sẽ mua lại.",POS
+R0231,"Laptop có âm thanh ổn áp, sẽ mua lại.",POS
+R0232,"Chuột có độ bền ở mức trung bình, shop phản hồi chậm.",NEU
+R0233,"Laptop có màn hình tạm được, mình mua lúc giảm giá.",NEU
+R0234,"Điện thoại có độ bền đáng tiền, dùng một tuần rồi.",POS
+R0235,"Laptop có độ bền như mô tả, shop phản hồi chậm.",NEU
+R0236,"Bàn phím có độ bền bình thường, dùng một tuần rồi, dù âm thanh thất vọng.",NEU
+R0237,"Tai nghe có pin không có gì đặc biệt, shop phản hồi chậm.",NEU
+R0238,"Sạc dự phòng có độ bền hay lỗi, dù giá ở mức trung bình.",NEG
+R0239,"Bàn phím có âm thanh vượt mong đợi, mình mua lúc giảm giá.",POS
