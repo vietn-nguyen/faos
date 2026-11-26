@@ -1,0 +1,156 @@
+{
+ "Restaurant": [
+  {
+   "raw_words": "Nước dùng rất tốt thật."
+  },
+  {
+   "raw_words": "Phở tệ thật."
+  },
+  {
+   "raw_words": "Không gian rất tốt nhưng nhân viên đáng thất vọng."
+  },
+  {
+   "raw_words": "Nước dùng bình thường nhé."
+  },
+  {
+   "raw_words": "Trà đá rất tốt, nhân viên tuyệt thật."
+  },
+  {
+   "raw_words": "Không gian tạm được, lần thứ 10 dùng."
+  },
+  {
+   "raw_words": "Giá ổn nhé."
+  },
+  {
+   "raw_words": "Không gian kém nhưng nhân viên đáng thất vọng."
+  },
+  {
+   "raw_words": "Nước dùng tệ nhưng giá bình thường thật."
+  },
+  {
+   "raw_words": "Giá tạm được, trà đá đáng thất vọng lắm."
+  },
+  {
+   "raw_words": "Nói chung không hài lòng lần 136."
+  },
+  {
+   "raw_words": "Nước dùng bình thường nhưng nhân viên tuyệt thật."
+  },
+  {
+   "raw_words": "Phở tuyệt, lần thứ 25 dùng."
+  },
+  {
+   "raw_words": "Nước dùng ổn, không gian tạm được nhé."
+  },
+  {
+   "raw_words": "Phở tệ, trà đá tạm được lắm."
+  },
+  {
+   "raw_words": "Trà đá tệ nhưng giá tạm được thật."
+  },
+  {
+   "raw_words": "Nhân viên tạm được nhưng trà đá tệ thật."
+  },
+  {
+   "raw_words": "Trà đá tệ, lần thứ 12 dùng."
+  },
+  {
+   "raw_words": "Nhân viên bình thường, không gian kém, lần thứ 24 dùng."
+  },
+  {
+   "raw_words": "Không gian rất tốt, phở tạm được lắm."
+  },
+  {
+   "raw_words": "Trà đá tệ, lần thứ 16 dùng."
+  },
+  {
+   "raw_words": "Phở bình thường, lần thứ 12 dùng."
+  },
+  {
+   "raw_words": "Giá đáng thất vọng."
+  },
+  {
+   "raw_words": "Nước dùng tuyệt nhưng giá tạm được nhé."
+  },
+  {
+   "raw_words": "Nhân viên tạm được thật."
+  }
+ ],
+ "Laptop": [
+  {
+   "raw_words": "Quạt bình thường, giá kém nhé."
+  },
+  {
+   "raw_words": "Pin ổn, giá bình thường."
+  },
+  {
+   "raw_words": "Quạt ổn, bàn phím bình thường, lần thứ 29 dùng."
+  },
+  {
+   "raw_words": "Bàn phím tạm được nhưng quạt tuyệt."
+  },
+  {
+   "raw_words": "Nói chung không hài lòng lần 130."
+  },
+  {
+   "raw_words": "Nói chung rất hài lòng lần 131."
+  },
+  {
+   "raw_words": "Quạt kém nhưng màn hình rất tốt, lần thứ 9 dùng."
+  },
+  {
+   "raw_words": "Loa bình thường nhé."
+  },
+  {
+   "raw_words": "Pin tạm được nhưng giá tạm được, lần thứ 13 dùng."
+  },
+  {
+   "raw_words": "Loa tạm được, quạt tuyệt lắm."
+  },
+  {
+   "raw_words": "Quạt ổn nhưng giá kém."
+  },
+  {
+   "raw_words": "Giá bình thường, pin kém nhé."
+  },
+  {
+   "raw_words": "Màn hình đáng thất vọng nhưng pin bình thường lắm."
+  },
+  {
+   "raw_words": "Giá đáng thất vọng nhưng quạt rất tốt nhé."
+  },
+  {
+   "raw_words": "Giá bình thường nhưng loa rất tốt."
+  },
+  {
+   "raw_words": "Nói chung rất hài lòng lần 141."
+  },
+  {
+   "raw_words": "Bàn phím bình thường nhưng màn hình bình thường, lần thứ 17 dùng."
+  },
+  {
+   "raw_words": "Quạt tạm được, lần thứ 3 dùng."
+  },
+  {
+   "raw_words": "Nói chung không hài lòng lần 144."
+  },
+  {
+   "raw_words": "Bàn phím tuyệt nhưng quạt rất tốt nhé."
+  },
+  {
+   "raw_words": "Bàn phím tuyệt, giá tuyệt thật."
+  },
+  {
+   "raw_words": "Bàn phím tạm được nhé."
+  },
+  {
+   "raw_words": "Nói chung không hài lòng lần 148."
+  },
+  {
+   "raw_words": "Màn hình rất tốt nhé."
+  },
+  {
+   "raw_words": "Màn hình ổn nhưng giá tạm được thật."
+  }
+ ]
+}

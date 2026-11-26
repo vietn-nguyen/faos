@@ -1,0 +1,651 @@
+{
+ "Restaurant": [
+  {
+   "raw_words": "Nước dùng rất tốt thật.",
+   "triples": [
+    {
+     "aspect": "nước dùng",
+     "category": "Food#Quality",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Phở tệ thật.",
+   "triples": [
+    {
+     "aspect": "phở",
+     "category": "Food#Quality",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Không gian rất tốt nhưng nhân viên đáng thất vọng.",
+   "triples": [
+    {
+     "aspect": "không gian",
+     "category": "Ambience#General",
+     "sentiment": "POS"
+    },
+    {
+     "aspect": "nhân viên",
+     "category": "Service#General",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nước dùng bình thường nhé.",
+   "triples": [
+    {
+     "aspect": "nước dùng",
+     "category": "Food#Quality",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Trà đá rất tốt, nhân viên tuyệt thật.",
+   "triples": [
+    {
+     "aspect": "trà đá",
+     "category": "Drinks#Quality",
+     "sentiment": "POS"
+    },
+    {
+     "aspect": "nhân viên",
+     "category": "Service#General",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Không gian tạm được, lần thứ 10 dùng.",
+   "triples": [
+    {
+     "aspect": "không gian",
+     "category": "Ambience#General",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Giá ổn nhé.",
+   "triples": [
+    {
+     "aspect": "giá",
+     "category": "Restaurant#Prices",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Không gian kém nhưng nhân viên đáng thất vọng.",
+   "triples": [
+    {
+     "aspect": "không gian",
+     "category": "Ambience#General",
+     "sentiment": "NEG"
+    },
+    {
+     "aspect": "nhân viên",
+     "category": "Service#General",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nước dùng tệ nhưng giá bình thường thật.",
+   "triples": [
+    {
+     "aspect": "nước dùng",
+     "category": "Food#Quality",
+     "sentiment": "NEG"
+    },
+    {
+     "aspect": "giá",
+     "category": "Restaurant#Prices",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Giá tạm được, trà đá đáng thất vọng lắm.",
+   "triples": [
+    {
+     "aspect": "giá",
+     "category": "Restaurant#Prices",
+     "sentiment": "NEU"
+    },
+    {
+     "aspect": "trà đá",
+     "category": "Drinks#Quality",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nói chung không hài lòng lần 136.",
+   "triples": [
+    {
+     "aspect": "NULL",
+     "category": "Restaurant#General",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nước dùng bình thường nhưng nhân viên tuyệt thật.",
+   "triples": [
+    {
+     "aspect": "nước dùng",
+     "category": "Food#Quality",
+     "sentiment": "NEU"
+    },
+    {
+     "aspect": "nhân viên",
+     "category": "Service#General",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Phở tuyệt, lần thứ 25 dùng.",
+   "triples": [
+    {
+     "aspect": "phở",
+     "category": "Food#Quality",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nước dùng ổn, không gian tạm được nhé.",
+   "triples": [
+    {
+     "aspect": "nước dùng",
+     "category": "Food#Quality",
+     "sentiment": "POS"
+    },
+    {
+     "aspect": "không gian",
+     "category": "Ambience#General",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Phở tệ, trà đá tạm được lắm.",
+   "triples": [
+    {
+     "aspect": "phở",
+     "category": "Food#Quality",
+     "sentiment": "NEG"
+    },
+    {
+     "aspect": "trà đá",
+     "category": "Drinks#Quality",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Trà đá tệ nhưng giá tạm được thật.",
+   "triples": [
+    {
+     "aspect": "trà đá",
+     "category": "Drinks#Quality",
+     "sentiment": "NEG"
+    },
+    {
+     "aspect": "giá",
+     "category": "Restaurant#Prices",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nhân viên tạm được nhưng trà đá tệ thật.",
+   "triples": [
+    {
+     "aspect": "nhân viên",
+     "category": "Service#General",
+     "sentiment": "NEU"
+    },
+    {
+     "aspect": "trà đá",
+     "category": "Drinks#Quality",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Trà đá tệ, lần thứ 12 dùng.",
+   "triples": [
+    {
+     "aspect": "trà đá",
+     "category": "Drinks#Quality",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nhân viên bình thường, không gian kém, lần thứ 24 dùng.",
+   "triples": [
+    {
+     "aspect": "nhân viên",
+     "category": "Service#General",
+     "sentiment": "NEU"
+    },
+    {
+     "aspect": "không gian",
+     "category": "Ambience#General",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Không gian rất tốt, phở tạm được lắm.",
+   "triples": [
+    {
+     "aspect": "không gian",
+     "category": "Ambience#General",
+     "sentiment": "POS"
+    },
+    {
+     "aspect": "phở",
+     "category": "Food#Quality",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Trà đá tệ, lần thứ 16 dùng.",
+   "triples": [
+    {
+     "aspect": "trà đá",
+     "category": "Drinks#Quality",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Phở bình thường, lần thứ 12 dùng.",
+   "triples": [
+    {
+     "aspect": "phở",
+     "category": "Food#Quality",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Giá đáng thất vọng.",
+   "triples": [
+    {
+     "aspect": "giá",
+     "category": "Restaurant#Prices",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nước dùng tuyệt nhưng giá tạm được nhé.",
+   "triples": [
+    {
+     "aspect": "nước dùng",
+     "category": "Food#Quality",
+     "sentiment": "POS"
+    },
+    {
+     "aspect": "giá",
+     "category": "Restaurant#Prices",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nhân viên tạm được thật.",
+   "triples": [
+    {
+     "aspect": "nhân viên",
+     "category": "Service#General",
+     "sentiment": "NEU"
+    }
+   ]
+  }
+ ],
+ "Laptop": [
+  {
+   "raw_words": "Quạt bình thường, giá kém nhé.",
+   "triples": [
+    {
+     "aspect": "quạt",
+     "category": "Fans#General",
+     "sentiment": "NEU"
+    },
+    {
+     "aspect": "giá",
+     "category": "Laptop#Price",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Pin ổn, giá bình thường.",
+   "triples": [
+    {
+     "aspect": "pin",
+     "category": "Battery#General",
+     "sentiment": "POS"
+    },
+    {
+     "aspect": "giá",
+     "category": "Laptop#Price",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Quạt ổn, bàn phím bình thường, lần thứ 29 dùng.",
+   "triples": [
+    {
+     "aspect": "quạt",
+     "category": "Fans#General",
+     "sentiment": "POS"
+    },
+    {
+     "aspect": "bàn phím",
+     "category": "Keyboard#General",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Bàn phím tạm được nhưng quạt tuyệt.",
+   "triples": [
+    {
+     "aspect": "bàn phím",
+     "category": "Keyboard#General",
+     "sentiment": "NEU"
+    },
+    {
+     "aspect": "quạt",
+     "category": "Fans#General",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nói chung không hài lòng lần 130.",
+   "triples": [
+    {
+     "aspect": "NULL",
+     "category": "Laptop#General",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nói chung rất hài lòng lần 131.",
+   "triples": [
+    {
+     "aspect": "NULL",
+     "category": "Laptop#General",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Quạt kém nhưng màn hình rất tốt, lần thứ 9 dùng.",
+   "triples": [
+    {
+     "aspect": "quạt",
+     "category": "Fans#General",
+     "sentiment": "NEG"
+    },
+    {
+     "aspect": "màn hình",
+     "category": "Display#General",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Loa bình thường nhé.",
+   "triples": [
+    {
+     "aspect": "loa",
+     "category": "Multimedia#General",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Pin tạm được nhưng giá tạm được, lần thứ 13 dùng.",
+   "triples": [
+    {
+     "aspect": "pin",
+     "category": "Battery#General",
+     "sentiment": "NEU"
+    },
+    {
+     "aspect": "giá",
+     "category": "Laptop#Price",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Loa tạm được, quạt tuyệt lắm.",
+   "triples": [
+    {
+     "aspect": "loa",
+     "category": "Multimedia#General",
+     "sentiment": "NEU"
+    },
+    {
+     "aspect": "quạt",
+     "category": "Fans#General",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Quạt ổn nhưng giá kém.",
+   "triples": [
+    {
+     "aspect": "quạt",
+     "category": "Fans#General",
+     "sentiment": "POS"
+    },
+    {
+     "aspect": "giá",
+     "category": "Laptop#Price",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Giá bình thường, pin kém nhé.",
+   "triples": [
+    {
+     "aspect": "giá",
+     "category": "Laptop#Price",
+     "sentiment": "NEU"
+    },
+    {
+     "aspect": "pin",
+     "category": "Battery#General",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Màn hình đáng thất vọng nhưng pin bình thường lắm.",
+   "triples": [
+    {
+     "aspect": "màn hình",
+     "category": "Display#General",
+     "sentiment": "NEG"
+    },
+    {
+     "aspect": "pin",
+     "category": "Battery#General",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Giá đáng thất vọng nhưng quạt rất tốt nhé.",
+   "triples": [
+    {
+     "aspect": "giá",
+     "category": "Laptop#Price",
+     "sentiment": "NEG"
+    },
+    {
+     "aspect": "quạt",
+     "category": "Fans#General",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Giá bình thường nhưng loa rất tốt.",
+   "triples": [
+    {
+     "aspect": "giá",
+     "category": "Laptop#Price",
+     "sentiment": "NEU"
+    },
+    {
+     "aspect": "loa",
+     "category": "Multimedia#General",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nói chung rất hài lòng lần 141.",
+   "triples": [
+    {
+     "aspect": "NULL",
+     "category": "Laptop#General",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Bàn phím bình thường nhưng màn hình bình thường, lần thứ 17 dùng.",
+   "triples": [
+    {
+     "aspect": "bàn phím",
+     "category": "Keyboard#General",
+     "sentiment": "NEU"
+    },
+    {
+     "aspect": "màn hình",
+     "category": "Display#General",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Quạt tạm được, lần thứ 3 dùng.",
+   "triples": [
+    {
+     "aspect": "quạt",
+     "category": "Fans#General",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nói chung không hài lòng lần 144.",
+   "triples": [
+    {
+     "aspect": "NULL",
+     "category": "Laptop#General",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Bàn phím tuyệt nhưng quạt rất tốt nhé.",
+   "triples": [
+    {
+     "aspect": "bàn phím",
+     "category": "Keyboard#General",
+     "sentiment": "POS"
+    },
+    {
+     "aspect": "quạt",
+     "category": "Fans#General",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Bàn phím tuyệt, giá tuyệt thật.",
+   "triples": [
+    {
+     "aspect": "bàn phím",
+     "category": "Keyboard#General",
+     "sentiment": "POS"
+    },
+    {
+     "aspect": "giá",
+     "category": "Laptop#Price",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Bàn phím tạm được nhé.",
+   "triples": [
+    {
+     "aspect": "bàn phím",
+     "category": "Keyboard#General",
+     "sentiment": "NEU"
+    }
+   ]
+  },
+  {
+   "raw_words": "Nói chung không hài lòng lần 148.",
+   "triples": [
+    {
+     "aspect": "NULL",
+     "category": "Laptop#General",
+     "sentiment": "NEG"
+    }
+   ]
+  },
+  {
+   "raw_words": "Màn hình rất tốt nhé.",
+   "triples": [
+    {
+     "aspect": "màn hình",
+     "category": "Display#General",
+     "sentiment": "POS"
+    }
+   ]
+  },
+  {
+   "raw_words": "Màn hình ổn nhưng giá tạm được thật.",
+   "triples": [
+    {
+     "aspect": "màn hình",
+     "category": "Display#General",
+     "sentiment": "POS"
+    },
+    {
+     "aspect": "giá",
+     "category": "Laptop#Price",
+     "sentiment": "NEU"
+    }
+   ]
+  }
+ ]
+}
